@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { fetchAdminExams } from "@/services/examServices";
+import { getAdminExams } from "@/services/examServices";
 import { format } from "date-fns";
 import { PencilIcon, TrashIcon } from "lucide-react";
 import Link from "next/link";
 
 export default async function ViewExams() {
-  const { data: exams, error } = await fetchAdminExams();
+  const { data: exams } = await getAdminExams();
 
   return (
     <div className="p-6 text-sm">
