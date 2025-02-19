@@ -1,41 +1,13 @@
-import Link from "next/link";
+import { ExamType } from "@/db/models/Exam";
 import React from "react";
 import { Button } from "../ui/button";
-import { getExams } from "@/services/examServices";
 import { format } from "date-fns";
 
-export default async function StudentDashboard() {
-  const { data: exams } = await getExams();
-
+export default function StudentExamListPage({ exams }: { exams: ExamType[] }) {
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 p-6">
-      {/* Stats Section */}
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-base lg:text-lg font-medium">Total Exams</h2>
-          <p className="text-3xl font-semibold mt-2">12</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-base lg:text-lg font-medium">Upcoming Exams</h2>
-          <p className="text-3xl font-semibold mt-2">4</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-base lg:text-lg font-medium">Completed Exams</h2>
-          <p className="text-3xl font-semibold mt-2">8</p>
-        </div>
-      </section>
-
-      {/* Recent Exams */}
+    <div className="screen-container">
       <section className="mt-8">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold mb-4">Recent Exams</h2>{" "}
-          <Link
-            href={"/dashboard/exams"}
-            className="hover:underline text-blue-600"
-          >
-            View all
-          </Link>
-        </div>
+        <h2 className="text-xl font-semibold mb-4">All Exams</h2>
         <div className="bg-white p-6 rounded-lg shadow-md hidden sm:block">
           <table className="w-full border-collapse">
             <thead>
@@ -70,10 +42,12 @@ export default async function StudentDashboard() {
           {exams.slice(0, 5).map((exam, index) => (
             <div key={index} className="bg-white p-4 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold">{exam.name}</h3>
-              <p className="text-gray-600">Date: {format(exam.date, "PPP")}</p>
+              <p className="text-gray-600 mb-1">
+                Date: {format(exam.date, "PPP")}
+              </p>
               <Button
-                variant={"ghost"}
-                className="h-fit p-2 hover:bg-blue-50 text-blue-600"
+                variant={"default"}
+                className="h-fit px-3 py-1.5 hover:bg-blue-600/90 bg-blue-600"
                 size={"sm"}
               >
                 Enroll

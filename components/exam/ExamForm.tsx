@@ -24,7 +24,13 @@ type QuestionDataType = {
   answer: number;
 };
 
-export default function ExamForm({ exam }: { exam?: ExamType }) {
+export default function ExamForm({
+  exam,
+  userId,
+}: {
+  exam?: ExamType;
+  userId: string;
+}) {
   const [name, setName] = useState(exam?.name || "");
   const [date, setDate] = useState(exam?.date);
   const [duration, setDuration] = useState(exam?.duration.toString() || "");
@@ -87,7 +93,7 @@ export default function ExamForm({ exam }: { exam?: ExamType }) {
     };
     const data = exam
       ? await updateExam(exam._id, examData)
-      : await createExam(examData);
+      : await createExam(userId, examData);
     if (data?.error) setError(data.error);
     setLoading(false);
   }

@@ -21,15 +21,30 @@ export type ExamType = {
   duration: number;
   questions: QuestionType[];
   students: UserType[];
+  examiner: UserType;
+  createdAt: string;
+  updatedAt: string;
 } & mongoose.Document;
 
-const ExamSchema = new mongoose.Schema<ExamType>({
-  name: { type: String, required: true },
-  date: { type: Date, required: true },
-  duration: { type: Number, required: true },
-  questions: { type: [QuestionSchema], required: true },
-  students: { type: [mongoose.SchemaTypes.ObjectId], default: [], ref: "User" },
-});
+const ExamSchema = new mongoose.Schema<ExamType>(
+  {
+    name: { type: String, required: true },
+    date: { type: Date, required: true },
+    duration: { type: Number, required: true },
+    questions: { type: [QuestionSchema], required: true },
+    students: {
+      type: [mongoose.SchemaTypes.ObjectId],
+      default: [],
+      ref: "User",
+    },
+    examiner: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true,
+      ref: "User",
+    },
+  },
+  { timestamps: true }
+);
 
 const Exam = mongoose.models?.Exam || mongoose.model("Exam", ExamSchema);
 

@@ -1,4 +1,5 @@
 import LogoutButton from "@/components/dashboard/LogoutButton";
+import Link from "next/link";
 import React from "react";
 
 export default function DashboardLayout({
@@ -9,7 +10,9 @@ export default function DashboardLayout({
   return (
     <>
       <header className="bg-white shadow-md p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
+        <Link href={"/dashboard"} className="text-2xl font-semibold">
+          Dashboard
+        </Link>
         <LogoutButton />
       </header>
       {children}

@@ -15,11 +15,11 @@ type ExamDataType = {
   }[];
 };
 
-export async function createExam(examData: ExamDataType) {
+export async function createExam(userId: string, examData: ExamDataType) {
   let canRedirect = false;
   try {
     await connectDB();
-    await Exam.create(examData);
+    await Exam.create({ ...examData, examiner: userId });
     canRedirect = true;
   } catch (err) {
     const error = err as Error;

@@ -1,23 +1,18 @@
-import ViewExamsPageContent from "@/components/exam/ViewExamsPageContent";
-import { getAdminExams } from "@/services/examServices";
-import Link from "next/link";
+import AdminExamListPage from "@/components/exam/AdminExamListPage";
+import StudentExamListPage from "@/components/exam/StudentExamListPage";
+import { getSession } from "@/services/authServices";
+import { getExams, getExamsByExaminer } from "@/services/examServices";
+import { notFound } from "next/navigation";
 
-export default async function ViewExams() {
-  const { data: exams } = await getAdminExams();
+export default async function ExamListPage() {
+  const user = await getSession();
+  if (!user) notFound();
 
-  return (
-    <div className="p-6 text-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl sm:text-2xl font-semibold ">Manage Exams</h1>
-        <Link
-          href={"/dashboard/exams/new"}
-          className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-600/90 duration-200"
-        >
-          Create Exam
-        </Link>
-      </div>
+  if (user.role === "Examiner") {
+    const { data: exams } = await getExamsByExaminer(user._id);
+    return <AdminExamListPage exams={exams} />;
+  }
 
-      <ViewExamsPageContent exams={exams} />
-    </div>
-  );
+  const { data: exams } = await getExams();
+  return <StudentExamListPage exams={exams} />;
 }

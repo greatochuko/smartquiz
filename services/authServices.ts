@@ -3,12 +3,12 @@ import { cookies } from "next/headers";
 
 export async function getSession(): Promise<UserType | null> {
   try {
-    const BASE_URL = process.env.BASE_URL;
-
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
     if (!token) throw new Error("Invalid Token");
+
+    const BASE_URL = process.env.BASE_URL;
 
     const res = await fetch(`${BASE_URL}/api/session`, {
       headers: { Authorization: `Bearer ${token || undefined}` },

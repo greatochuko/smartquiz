@@ -164,12 +164,19 @@ export default function SignupForm() {
         <select
           name="role"
           id="role"
-          className="p-2 rounded-md border mt-1 w-full"
+          value={formEntries.role}
+          onChange={(e) =>
+            dispatch({
+              type: "SET_FIELD",
+              field: "role",
+              value: e.target.value,
+            })
+          }
+          className="p-2 rounded-md border mt-1 w-full focus:ring-2 ring-blue-500 ring-offset-2"
         >
           <option value="Student">Student</option>
           <option value="Examiner">Examiner</option>
         </select>
-        <Error message={confirmPasswordError} />
       </div>
       <Error message={signupError} />
       <button

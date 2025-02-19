@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { PencilIcon, TrashIcon } from "lucide-react";
+import { PencilIcon, TrashIcon, UserIcon } from "lucide-react";
 import { ExamType } from "@/db/models/Exam";
 import Link from "next/link";
 import { deleteExam } from "@/actions/examActions";
@@ -50,13 +50,13 @@ export default function ViewExamsPageContent({ exams }: { exams: ExamType[] }) {
                 <td className="p-2">{format(exam.date, "PPP")}</td>
                 <td className="p-2">{exam.students.length}</td>
                 <td className="p-2 flex gap-2">
-                  <Link href={`/dashboard/exams/edit/${exam._id}`}>
+                  <Link href={`/dashboard/exams/${exam._id}/edit`}>
                     <Button
                       variant={"ghost"}
                       className="h-fit p-2 hover:bg-blue-50"
                       size={"sm"}
                     >
-                      <PencilIcon className="text-blue-600 w-4" />
+                      <PencilIcon className="text-blue-600 w-4 h-4" />
                     </Button>
                   </Link>
                   <Button
@@ -65,8 +65,18 @@ export default function ViewExamsPageContent({ exams }: { exams: ExamType[] }) {
                     size={"sm"}
                     onClick={() => setExamToDelete(exam)}
                   >
-                    <TrashIcon className="text-rose-600 w-4" />
+                    <TrashIcon className="text-rose-600 w-4 h-4" />
                   </Button>
+                  <Link href={`/dashboard/exams/${exam._id}/students`}>
+                    <Button
+                      variant={"ghost"}
+                      className="h-fit p-2 hover:bg-amber-50"
+                      size={"sm"}
+                      onClick={() => setExamToDelete(exam)}
+                    >
+                      <UserIcon className="text-amber-600 w-4 h-4" />
+                    </Button>{" "}
+                  </Link>
                 </td>
               </tr>
             ))}
@@ -85,17 +95,22 @@ export default function ViewExamsPageContent({ exams }: { exams: ExamType[] }) {
             <p className="text-gray-600">Date: {format(exam.date, "PPP")}</p>
             <p className="text-gray-600">Students: {exam.students.length}</p>
             <div className="mt-2 flex gap-2">
-              <Link href={`/dashboard/exams/edit/${exam._id}`}>
-                <Button className="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700 h-fit">
+              <Link href={`/dashboard/exams/${exam._id}/edit`}>
+                <Button className="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-600/90 h-fit">
                   Edit
                 </Button>
               </Link>
               <Button
                 onClick={() => setExamToDelete(exam)}
-                className="bg-rose-600 text-white px-3 py-1.5 rounded-md hover:bg-rose-700 h-fit"
+                className="bg-rose-600 text-white px-3 py-1.5 rounded-md hover:bg-rose-600/90 h-fit"
               >
                 Delete
               </Button>
+              <Link href={`/dashboard/exams/${exam._id}/students`}>
+                <Button className="bg-amber-600 text-white px-3 py-1.5 rounded-md hover:bg-amber-600/90 h-fit">
+                  Students
+                </Button>
+              </Link>
             </div>
           </div>
         ))}
