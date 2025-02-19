@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { UserType } from "./User";
 
 export type QuestionType = {
   _id: string;
@@ -19,6 +20,7 @@ export type ExamType = {
   date: Date;
   duration: number;
   questions: QuestionType[];
+  students: UserType[];
 } & mongoose.Document;
 
 const ExamSchema = new mongoose.Schema<ExamType>({
@@ -26,6 +28,7 @@ const ExamSchema = new mongoose.Schema<ExamType>({
   date: { type: Date, required: true },
   duration: { type: Number, required: true },
   questions: { type: [QuestionSchema], required: true },
+  students: { type: [mongoose.SchemaTypes.ObjectId], default: [], ref: "User" },
 });
 
 const Exam = mongoose.models?.Exam || mongoose.model("Exam", ExamSchema);
