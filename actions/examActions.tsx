@@ -45,3 +45,16 @@ export async function updateExam(examId: string, examData: ExamDataType) {
     if (canRedirect) redirect("/dashboard/exams");
   }
 }
+
+export async function deleteExam(examId: string) {
+  try {
+    await connectDB();
+    const updatedExam = await Exam.findByIdAndDelete(examId);
+    if (!updatedExam) throw new Error("Unable to update exam");
+    return { error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error deleting exam: ", error.message);
+    return { error: "An error occured deleting exam" };
+  }
+}
