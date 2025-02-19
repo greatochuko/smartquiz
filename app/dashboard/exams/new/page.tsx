@@ -1,4 +1,6 @@
 "use client";
+import { createExam } from "@/actions/examActions";
+import Error from "@/components/Error";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -10,7 +12,7 @@ import {
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, isPast } from "date-fns";
 import { ArrowLeftIcon, CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,12 +24,17 @@ type QuestionDataType = {
   answer: number;
 };
 
+const initialQuestions: QuestionDataType[] = [
+  { _id: "1", text: "", options: ["", "", "", ""], answer: 0 },
+];
+
 export default function CreateExam() {
-  const [examName, setExamName] = useState("");
-  const [examDate, setExamDate] = useState<Date>();
+  const [name, setName] = useState("");
+  const [date, setDate] = useState<Date>();
   const [duration, setDuration] = useState("");
-  const [questions, setQuestions] = useState<QuestionDataType[]>([]);
+  const [questions, setQuestions] = useState(initialQuestions);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const router = useRouter();
 
@@ -56,21 +63,32 @@ export default function CreateExam() {
 
   const cannotSubmit =
     loading ||
-    !examName.trim() ||
-    !examDate ||
+    !name.trim() ||
+    !date ||
     Number(duration) <= 0 ||
     !questions.length ||
     questions.some(
       (question) =>
-        !question.text ||
-        !question.answer ||
-        question.options.some((option) => !option.trim())
+        !question.text || question.options.some((option) => !option.trim())
     );
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (cannotSubmit) return;
     setLoading(true);
-    console.log({ examName, examDate, duration, questions });
+    setError("");
+    const examData = {
+      name,
+      date,
+      duration: Number(duration),
+      questions: questions.map((q) => ({
+        text: q.text,
+        options: q.options,
+        answer: q.answer,
+      })),
+    };
+    const data = await createExam(examData);
+    if (data?.error) setError(data.error);
     setLoading(false);
   }
 
@@ -91,27 +109,28 @@ export default function CreateExam() {
           type="text"
           placeholder="Exam Name"
           className="w-full p-2 border rounded-md ring-0 focus-visible:ring-blue-400"
-          value={examName}
-          onChange={(e) => setExamName(e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant={"outline"}
               className={cn(
-                "w-full justify-start text-left font-normal",
-                !examDate && "text-muted-foreground"
+                "w-full justify-start text-left font-normal focus-visible:ring-blue-400",
+                !date && "text-muted-foreground"
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {examDate ? format(examDate, "PPP") : <span>Exam Date</span>}
+              {date ? format(date, "PPP") : <span>Exam Date</span>}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
             <Calendar
               mode="single"
-              selected={examDate}
-              onSelect={setExamDate}
+              disabled={(date) => isPast(date)}
+              selected={date}
+              onSelect={setDate}
               initialFocus
             />
           </PopoverContent>
@@ -129,6 +148,20 @@ export default function CreateExam() {
             key={q._id}
             className="p-3 border rounded-md mb-2 flex flex-col gap-2"
           >
+            <div className="flex justify-between items-center">
+              <h4>Question {index + 1}</h4>
+              {questions.length > 1 && (
+                <Button
+                  variant={"destructive"}
+                  className="h-fit"
+                  onClick={() =>
+                    setQuestions((curr) => curr.filter((_, i) => index !== i))
+                  }
+                >
+                  Delete
+                </Button>
+              )}
+            </div>
             <Textarea
               placeholder="Question Text"
               className="w-full p-2 border rounded-md ring-0 focus-visible:ring-blue-400"
@@ -164,6 +197,7 @@ export default function CreateExam() {
             ))}
           </div>
         ))}
+        <Error message={error} />
         <div className="flex justify-between">
           <button
             type="button"

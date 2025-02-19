@@ -1,6 +1,6 @@
 "use client";
 import React, { useReducer, useState } from "react";
-import Error from "./Error";
+import Error from "../Error";
 import { signup } from "@/actions/authActions";
 import LoadingIndicator from "../LoadingIndicator";
 

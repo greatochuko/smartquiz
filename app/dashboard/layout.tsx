@@ -8,7 +8,7 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <header className="bg-white shadow-md p-4 rounded-lg flex justify-between items-center">
+      <header className="bg-white shadow-md p-4 flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
         <LogoutButton />
       </header>

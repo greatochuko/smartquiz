@@ -3,7 +3,7 @@
 import { login } from "@/actions/authActions";
 import Link from "next/link";
 import React, { useState } from "react";
-import Error from "./Error";
+import Error from "../Error";
 import LoadingIndicator from "../LoadingIndicator";
 
 export default function LoginForm() {

@@ -16,7 +16,7 @@ export default function LogoutButton() {
   return (
     <>
       <button
-        className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+        className="bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-600/90"
         onClick={() => setIsModalOpen(true)}
       >
         Logout
@@ -27,7 +27,7 @@ export default function LogoutButton() {
             <p className="mb-4">Are you sure you want to logout?</p>
             <div className="flex gap-4">
               <button
-                className="bg-red-600 duration-200 flex-1 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                className="bg-rose-600 duration-200 flex-1 text-white px-4 py-2 rounded-lg hover:bg-rose-600/90"
                 onClick={handleLogout}
               >
                 {loading ? <LoadingIndicator color="#fff" /> : "Yes, Logout"}
