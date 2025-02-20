@@ -15,8 +15,9 @@ const QuestionSchema = new mongoose.Schema<QuestionType>({
 });
 
 export type StudentType = {
+  _id: string;
   user: UserType;
-  status: "registered" | "requested" | "unregistered";
+  status: "registered" | "requested" | "unregistered" | "rejected";
 };
 
 export type ExamType = {
@@ -48,7 +49,7 @@ const ExamSchema = new mongoose.Schema<ExamType>(
           status: {
             type: String,
             required: true,
-            enum: ["registered", "requested", "unregistered"],
+            enum: ["registered", "requested", "unregistered", "rejected"],
           },
         },
       ],

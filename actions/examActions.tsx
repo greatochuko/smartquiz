@@ -34,7 +34,10 @@ export async function updateExam(examId: string, examData: ExamDataType) {
   let canRedirect = false;
   try {
     await connectDB();
-    const updatedExam = await Exam.findByIdAndUpdate(examId, examData);
+    const updatedExam: ExamType | null = await Exam.findByIdAndUpdate(
+      examId,
+      examData
+    );
     if (!updatedExam) throw new Error("Unable to update exam");
     canRedirect = true;
   } catch (err) {
@@ -49,7 +52,7 @@ export async function updateExam(examId: string, examData: ExamDataType) {
 export async function deleteExam(examId: string) {
   try {
     await connectDB();
-    const updatedExam = await Exam.findByIdAndDelete(examId);
+    const updatedExam: ExamType | null = await Exam.findByIdAndDelete(examId);
     if (!updatedExam) throw new Error("Unable to update exam");
     return { error: null };
   } catch (err) {
@@ -66,12 +69,11 @@ export async function registerForExam(examId: string, userId: string) {
       examId,
       {
         $push: { students: { user: userId, status: "requested" } },
-      },
-      { new: true }
+      }
     );
     if (!examToUpdated) throw new Error("Unable to register for exam");
 
-    const updatedExam = JSON.parse(
+    const updatedExam: ExamType | null = JSON.parse(
       JSON.stringify(
         await Exam.findById(examId).populate({
           path: "students.user",
@@ -93,17 +95,13 @@ export async function registerForExam(examId: string, userId: string) {
 export async function cancelExamRegistration(examId: string, userId: string) {
   try {
     await connectDB();
-    const examToUpdate: ExamType | null = await Exam.findByIdAndUpdate(
-      examId,
-      {
-        $pull: { students: { user: userId } },
-      },
-      { new: true }
-    );
+    const examToUpdate: ExamType | null = await Exam.findByIdAndUpdate(examId, {
+      $pull: { students: { user: userId } },
+    });
     if (!examToUpdate)
       throw new Error("Unable to cancel registeration for exam");
 
-    const updatedExam = JSON.parse(
+    const updatedExam: ExamType | null = JSON.parse(
       JSON.stringify(
         await Exam.findById(examId).populate({
           path: "students.user",
@@ -117,6 +115,63 @@ export async function cancelExamRegistration(examId: string, userId: string) {
     console.log("Error requesting registration: ", error.message);
     return {
       updatedExam: null,
+      error: "An error occured requesting exam registration",
+    };
+  }
+}
+
+export async function acceptRegistrationRequest(
+  examId: string,
+  userId: string
+) {
+  try {
+    await connectDB();
+    const examToUpdate = await Exam.findByIdAndUpdate(
+      examId,
+      {
+        $set: { "students.$[elem].status": "registered" },
+      },
+      {
+        new: true,
+        arrayFilters: [{ "elem.user": userId }],
+      }
+    );
+    if (!examToUpdate)
+      throw new Error("Unable to cancel registeration for exam");
+
+    return { error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error requesting registration: ", error.message);
+    return {
+      error: "An error occured requesting exam registration",
+    };
+  }
+}
+
+export async function rejectRegistrationRequest(
+  examId: string,
+  userId: string
+) {
+  try {
+    await connectDB();
+    const examToUpdate = await Exam.findByIdAndUpdate(
+      examId,
+      {
+        $set: { "students.$[elem].status": "rejected" },
+      },
+      {
+        new: true,
+        arrayFilters: [{ "elem.user": userId }],
+      }
+    );
+    if (!examToUpdate)
+      throw new Error("Unable to cancel registeration for exam");
+    return { error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error requesting registration: ", error.message);
+    return {
       error: "An error occured requesting exam registration",
     };
   }

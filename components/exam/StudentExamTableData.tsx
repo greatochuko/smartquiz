@@ -19,8 +19,8 @@ export default function StudentExamTableData({
 
   async function handleRegister() {
     setLoading(true);
-    const { updatedExam, error } = await registerForExam(examData._id, userId);
-    if (error === null) {
+    const { updatedExam } = await registerForExam(examData._id, userId);
+    if (updatedExam) {
       setExamData(updatedExam);
     }
     setLoading(false);
@@ -28,11 +28,8 @@ export default function StudentExamTableData({
 
   async function handleCancelRegistration() {
     setLoading(true);
-    const { updatedExam, error } = await cancelExamRegistration(
-      examData._id,
-      userId
-    );
-    if (error === null) {
+    const { updatedExam } = await cancelExamRegistration(examData._id, userId);
+    if (updatedExam) {
       setExamData(updatedExam);
     }
     setLoading(false);
