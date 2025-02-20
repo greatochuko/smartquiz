@@ -36,7 +36,7 @@ export default function StudentExamTableData({
   }
 
   const studentInExam = examData.students.find(
-    (stu) => stu.user._id === userId
+    (stu) => stu.user._id === userId,
   );
 
   const registered = studentInExam?.status === "registered";
@@ -47,31 +47,31 @@ export default function StudentExamTableData({
     status === "registered"
       ? "text-green-500"
       : status === "requested"
-      ? "text-amber-500"
-      : "text-rose-500";
+        ? "text-amber-500"
+        : "text-rose-500";
 
   return (
     <tr className="border-b">
-      <td className="p-2 w-2/5">{examData.name}</td>
-      <td className="p-2 w-1/5">{format(examData.date, "PP")}</td>
-      <td className={`p-2 w-1/5 text-sm capitalize ${statusColor}`}>
+      <td className="w-2/5 p-2">{examData.name}</td>
+      <td className="w-1/5 p-2">{format(examData.date, "PP")}</td>
+      <td className={`w-1/5 p-2 text-sm capitalize ${statusColor}`}>
         {status}
       </td>
-      <td className={`p-2 w-1/5 `}>
+      <td className={`w-1/5 p-2`}>
         {registered ? (
           <Link
             href={`/exam/${exam._id}/start`}
-            className="h-fit hover:bg-green-50 text-green-600 text-sm rounded-md font-medium disabled:cursor-not-allowed p-2 duration-200 hover:text-green-700"
+            className="h-fit rounded-md p-2 text-sm font-medium text-green-600 duration-200 hover:bg-green-50 hover:text-green-700 disabled:cursor-not-allowed"
           >
             Take Exam
           </Link>
         ) : (
           <Button
             variant={"ghost"}
-            className={`h-fit p-2 disabled:cursor-not-allowed duration-200 ${
+            className={`h-fit p-2 duration-200 disabled:cursor-not-allowed ${
               studentInExam
-                ? "text-rose-500 hover:text-rose-600 hover:bg-rose-50"
-                : "text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                ? "text-rose-500 hover:bg-rose-50 hover:text-rose-600"
+                : "text-blue-600 hover:bg-blue-50 hover:text-blue-700"
             }`}
             size={"sm"}
             onClick={studentInExam ? handleCancelRegistration : handleRegister}

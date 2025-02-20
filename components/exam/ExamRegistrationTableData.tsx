@@ -45,45 +45,47 @@ export default function ExamRegistrationTableData({
     const { error } = await cancelExamRegistration(examId, student.user._id);
     if (error === null) {
       setStudentList((curr) =>
-        curr.filter((stu) => stu._id !== studentData._id)
+        curr.filter((stu) => stu._id !== studentData._id),
       );
     }
     setLoading(false);
   }
 
+  const anyLoading = acceptLoading || rejectLoading || loading;
+
   const statusColor =
     studentData.status === "registered"
       ? "text-green-500"
       : studentData.status === "requested"
-      ? "text-amber-500"
-      : "text-rose-500";
+        ? "text-amber-500"
+        : "text-rose-500";
 
   return (
     <tr className="border-b">
-      <td className="p-2 w-2/4">
+      <td className="w-2/4 p-2">
         {studentData.user.firstName} {studentData.user.lastName}
       </td>
-      <td className={`p-2 w-1/4 capitalize ${statusColor}`}>
+      <td className={`w-1/4 p-2 capitalize ${statusColor}`}>
         {studentData.status}
       </td>
-      <td className="p-2 w-1/4 flex gap-2">
+      <td className="flex w-1/4 gap-2 p-2">
         {studentData.status === "requested" ? (
           <>
             <Button
               variant={"ghost"}
-              className="h-fit p-2 hover:bg-green-50 text-green-600 hover:text-green-700"
+              className="h-fit p-2 text-green-600 hover:bg-green-50 hover:text-green-700"
               size={"sm"}
               onClick={handleAccept}
-              disabled={acceptLoading}
+              disabled={anyLoading}
             >
               {acceptLoading ? <LoadingIndicator color="#16a34a " /> : "Accept"}
             </Button>
             <Button
               variant={"ghost"}
-              className="h-fit p-2 hover:bg-rose-50 text-rose-500 hover:text-rose-600"
+              className="h-fit p-2 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
               size={"sm"}
               onClick={handleReject}
-              disabled={rejectLoading}
+              disabled={anyLoading}
             >
               {rejectLoading ? <LoadingIndicator color="#f43f5e " /> : "Reject"}
             </Button>
@@ -91,10 +93,10 @@ export default function ExamRegistrationTableData({
         ) : (
           <Button
             variant={"ghost"}
-            className="h-fit p-2 hover:bg-rose-50 text-rose-500 hover:text-rose-600"
+            className="h-fit p-2 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
             size={"sm"}
             onClick={handleRemoveStudent}
-            disabled={loading}
+            disabled={anyLoading}
           >
             {rejectLoading ? <LoadingIndicator color="#f43f5e " /> : "Remove"}
           </Button>

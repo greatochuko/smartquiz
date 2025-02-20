@@ -41,7 +41,12 @@ export default function ExamRegistrationTable({
       {/* Mobile View - Cards */}
       <div className="sm:hidden flex flex-col gap-4">
         {studentList.map((student) => (
-          <ExamRegistrationTableCard student={student} key={student._id} />
+          <ExamRegistrationTableCard
+            student={student}
+            key={student._id}
+            examId={examId}
+            setStudentList={setStudentList}
+          />
         ))}
       </div>
     </>
