@@ -14,13 +14,18 @@ const QuestionSchema = new mongoose.Schema<QuestionType>({
   answer: { type: Number, required: true },
 });
 
+export type StudentType = {
+  user: UserType;
+  status: "registered" | "requested" | "unregistered";
+};
+
 export type ExamType = {
   _id: string;
   name: string;
   date: Date;
   duration: number;
   questions: QuestionType[];
-  students: UserType[];
+  students: StudentType[];
   examiner: UserType;
   createdAt: string;
   updatedAt: string;
@@ -33,9 +38,21 @@ const ExamSchema = new mongoose.Schema<ExamType>(
     duration: { type: Number, required: true },
     questions: { type: [QuestionSchema], required: true },
     students: {
-      type: [mongoose.SchemaTypes.ObjectId],
+      type: [
+        {
+          user: {
+            type: mongoose.SchemaTypes.ObjectId,
+            required: true,
+            ref: "User",
+          },
+          status: {
+            type: String,
+            required: true,
+            enum: ["registered", "requested", "unregistered"],
+          },
+        },
+      ],
       default: [],
-      ref: "User",
     },
     examiner: {
       type: mongoose.SchemaTypes.ObjectId,

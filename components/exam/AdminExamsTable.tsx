@@ -9,7 +9,7 @@ import { deleteExam } from "@/actions/examActions";
 import LoadingIndicator from "../LoadingIndicator";
 import Error from "../Error";
 
-export default function ViewExamsPageContent({ exams }: { exams: ExamType[] }) {
+export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
   const [examList, setExamList] = useState(exams);
   const [examToDelete, setExamToDelete] = useState<ExamType | null>(null);
   const [loading, setLoading] = useState(false);
@@ -72,10 +72,9 @@ export default function ViewExamsPageContent({ exams }: { exams: ExamType[] }) {
                       variant={"ghost"}
                       className="h-fit p-2 hover:bg-amber-50"
                       size={"sm"}
-                      onClick={() => setExamToDelete(exam)}
                     >
                       <UserIcon className="text-amber-600 w-4 h-4" />
-                    </Button>{" "}
+                    </Button>
                   </Link>
                 </td>
               </tr>
@@ -106,7 +105,7 @@ export default function ViewExamsPageContent({ exams }: { exams: ExamType[] }) {
               >
                 Delete
               </Button>
-              <Link href={`/dashboard/exams/${exam._id}/students`}>
+              <Link href={`/dashboard/exams/${exam._id}/edit`}>
                 <Button className="bg-amber-600 text-white px-3 py-1.5 rounded-md hover:bg-amber-600/90 h-fit">
                   Students
                 </Button>

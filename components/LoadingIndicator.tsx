@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function LoadingIndicator({ size = 16, color = "#3b82f6 " }) {
+export default function LoadingIndicator({ size = 16, color = "#2563eb " }) {
   return (
     <div className="flex animate-spin items-center justify-center">
       <svg

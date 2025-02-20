@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React from "react";
-import ViewExamsPageContent from "./ViewExamsPageContent";
+import AdminExamsTable from "./AdminExamsTable";
 import { ExamType } from "@/db/models/Exam";
 
 export default function AdminExamListPage({ exams }: { exams: ExamType[] }) {
@@ -17,9 +17,9 @@ export default function AdminExamListPage({ exams }: { exams: ExamType[] }) {
       </div>
 
       {exams.length > 0 ? (
-        <ViewExamsPageContent exams={exams} />
+        <AdminExamsTable exams={exams} />
       ) : (
-        <p className="text-muted-foreground text-center">
+        <p className="text-muted-foreground text-center p-4">
           You have not created any exams yet
         </p>
       )}

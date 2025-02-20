@@ -1,7 +1,7 @@
 "use server";
 
 import connectDB from "@/db/connectDB";
-import Exam from "@/db/models/Exam";
+import Exam, { ExamType } from "@/db/models/Exam";
 import { redirect } from "next/navigation";
 
 type ExamDataType = {
@@ -56,5 +56,68 @@ export async function deleteExam(examId: string) {
     const error = err as Error;
     console.log("Error deleting exam: ", error.message);
     return { error: "An error occured deleting exam" };
+  }
+}
+
+export async function registerForExam(examId: string, userId: string) {
+  try {
+    await connectDB();
+    const examToUpdated: ExamType | null = await Exam.findByIdAndUpdate(
+      examId,
+      {
+        $push: { students: { user: userId, status: "requested" } },
+      },
+      { new: true }
+    );
+    if (!examToUpdated) throw new Error("Unable to register for exam");
+
+    const updatedExam = JSON.parse(
+      JSON.stringify(
+        await Exam.findById(examId).populate({
+          path: "students.user",
+          select: "firstName lastName",
+        })
+      )
+    );
+    return { updatedExam, error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error requesting registration: ", error.message);
+    return {
+      updatedExam: null,
+      error: "An error occured requesting exam registration",
+    };
+  }
+}
+
+export async function cancelExamRegistration(examId: string, userId: string) {
+  try {
+    await connectDB();
+    const examToUpdate: ExamType | null = await Exam.findByIdAndUpdate(
+      examId,
+      {
+        $pull: { students: { user: userId } },
+      },
+      { new: true }
+    );
+    if (!examToUpdate)
+      throw new Error("Unable to cancel registeration for exam");
+
+    const updatedExam = JSON.parse(
+      JSON.stringify(
+        await Exam.findById(examId).populate({
+          path: "students.user",
+          select: "firstName lastName",
+        })
+      )
+    );
+    return { updatedExam, error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error requesting registration: ", error.message);
+    return {
+      updatedExam: null,
+      error: "An error occured requesting exam registration",
+    };
   }
 }
