@@ -85,7 +85,7 @@ export default function SignupForm() {
                 value: e.target.value,
               })
             }
-            className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-1 w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div>
@@ -102,7 +102,7 @@ export default function SignupForm() {
                 value: e.target.value,
               })
             }
-            className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-1 w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -120,7 +120,7 @@ export default function SignupForm() {
             })
           }
           placeholder="Enter your email"
-          className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div className="mt-4">
@@ -137,7 +137,7 @@ export default function SignupForm() {
             })
           }
           placeholder="Create a password"
-          className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <Error message={passwordError} />
       </div>
@@ -155,7 +155,7 @@ export default function SignupForm() {
             })
           }
           placeholder="Re-enter password"
-          className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <Error message={confirmPasswordError} />
       </div>
@@ -172,8 +172,9 @@ export default function SignupForm() {
               value: e.target.value,
             })
           }
-          className="p-2 rounded-md border mt-1 w-full focus:ring-2 ring-blue-500 ring-offset-2"
+          className="mt-1 w-full rounded-md border p-2 ring-blue-500 ring-offset-2 focus:ring-2"
         >
+          <option hidden>Select a role</option>
           <option value="Student">Student</option>
           <option value="Examiner">Examiner</option>
         </select>
@@ -182,7 +183,7 @@ export default function SignupForm() {
       <button
         disabled={cannotSubmit}
         type="submit"
-        className="w-full mt-4 bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed text-white py-2 rounded-md hover:bg-blue-700 transition focus-visible:ring-2 ring-blue-400 ring-offset-2"
+        className="mt-4 w-full rounded-md bg-blue-600 py-2 text-white ring-blue-400 ring-offset-2 transition hover:bg-blue-700 focus-visible:ring-2 disabled:cursor-not-allowed disabled:bg-blue-300"
       >
         {loading ? <LoadingIndicator color="#fff" /> : "Sign Up"}
       </button>

@@ -9,7 +9,7 @@ export default function Header({ user }: { user?: UserType | null }) {
   const pathname = usePathname();
 
   const isAuthRoute =
-    pathname.startsWith("/login") || pathname.startsWith("/register");
+    pathname.startsWith("/login") || pathname.startsWith("/signup");
 
   if (isAuthRoute) return null;
 
