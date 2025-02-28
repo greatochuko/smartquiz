@@ -9,7 +9,7 @@ const connectDB = async () => {
 
   try {
     await mongoose.connect(MONGODB_URI, {
-      dbName: "SmartQuiz",
+      dbName: "SmartQuizz",
     });
   } catch (error) {
     console.error("MongoDB connection error:", error);

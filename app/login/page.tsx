@@ -12,7 +12,7 @@ export default function LoginPage() {
           href={"/"}
           className="mx-auto block w-fit text-center text-lg font-semibold text-blue-600 hover:underline"
         >
-          SmartQuiz
+          SmartQuizz
         </Link>
         <h2 className="text-center text-2xl font-bold text-blue-600">
           Login to ExamEase

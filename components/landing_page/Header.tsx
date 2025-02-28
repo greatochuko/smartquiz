@@ -27,7 +27,7 @@ export default function Header({ user }: { user?: UserType | null }) {
   return (
     <header className="bg-white shadow-md">
       <div className="screen-container flex items-center justify-between py-4">
-        <h1 className="text-2xl font-semibold text-blue-600">SmartQuiz</h1>
+        <h1 className="text-2xl font-semibold text-blue-600">SmartQuizz</h1>
         <nav>
           <ul className="flex space-x-6">
             <li className="hidden sm:block">
