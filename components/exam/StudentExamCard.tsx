@@ -1,46 +1,25 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "../ui/button";
 import { format } from "date-fns";
-import { ExamType } from "@/db/models/Exam";
-import { registerForExam, cancelExamRegistration } from "@/actions/examActions";
+import { ExamType, StudentType } from "@/db/models/Exam";
 import Link from "next/link";
+
+export type StudentExamCardProps = {
+  exam: ExamType;
+  studentInExam?: StudentType;
+  handleRegister(): void;
+  handleCancelRegistration(): void;
+  loading: boolean;
+};
 
 export default function StudentExamCard({
   exam,
-  userId,
-}: {
-  exam: ExamType;
-  userId: string;
-}) {
-  const [examData, setExamData] = useState(exam);
-  const [loading, setLoading] = useState(false);
-
-  async function handleRegister() {
-    setLoading(true);
-    const { updatedExam, error } = await registerForExam(examData._id, userId);
-    if (error === null) {
-      setExamData(updatedExam);
-    }
-    setLoading(false);
-  }
-
-  async function handleCancelRegistration() {
-    setLoading(true);
-    const { updatedExam, error } = await cancelExamRegistration(
-      examData._id,
-      userId
-    );
-    if (error === null) {
-      setExamData(updatedExam);
-    }
-    setLoading(false);
-  }
-
-  const studentInExam = examData.students.find(
-    (stu) => stu.user._id === userId
-  );
-
+  studentInExam,
+  handleRegister,
+  handleCancelRegistration,
+  loading,
+}: StudentExamCardProps) {
   const registered = studentInExam?.status === "registered";
 
   const status = studentInExam?.status || "unregistered";
@@ -49,30 +28,30 @@ export default function StudentExamCard({
     status === "registered"
       ? "text-green-500"
       : status === "requested"
-      ? "text-amber-500"
-      : "text-rose-500";
+        ? "text-amber-500"
+        : "text-rose-500";
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md">
+    <div className="rounded-lg bg-white p-4 shadow-md">
       <h3 className="text-lg font-semibold">{exam.name}</h3>
-      <p className="text-gray-600 mb-1">Date: {format(exam.date, "PPP")}</p>
-      <p className={`text-gray-600 mb-1 capitalize text-sm ${statusColor}`}>
+      <p className="mb-1 text-gray-600">Date: {format(exam.date, "PPP")}</p>
+      <p className={`mb-1 text-sm capitalize text-gray-600 ${statusColor}`}>
         {status}
       </p>
       {registered ? (
         <Link
           href={`/exam/${exam._id}/start`}
-          className="h-fit text-white text-sm rounded-md font-medium disabled:cursor-not-allowed px-3 py-1.5 duration-200 bg-green-600 hover:bg-green-600/90"
+          className="h-fit rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white duration-200 hover:bg-green-600/90 disabled:cursor-not-allowed"
         >
           Take Exam
         </Link>
       ) : (
         <Button
           variant={"default"}
-          className={`h-fit disabled:cursor-not-allowed px-3 py-1.5 duration-200 ${
+          className={`h-fit px-3 py-1.5 duration-200 disabled:cursor-not-allowed ${
             studentInExam
-              ? "hover:bg-rose-600/90 bg-rose-600"
-              : "hover:bg-blue-600/90 bg-blue-600"
+              ? "bg-rose-600 hover:bg-rose-600/90"
+              : "bg-blue-600 hover:bg-blue-600/90"
           }`}
           size={"sm"}
           onClick={studentInExam ? handleCancelRegistration : handleRegister}
@@ -83,8 +62,8 @@ export default function StudentExamCard({
               ? "Canceling..."
               : "Cancel Registration"
             : loading
-            ? "Registering..."
-            : "Register"}
+              ? "Registering..."
+              : "Register"}
         </Button>
       )}
     </div>

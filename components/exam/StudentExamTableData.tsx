@@ -1,44 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "../ui/button";
 import { format } from "date-fns";
-import { ExamType } from "@/db/models/Exam";
-import { cancelExamRegistration, registerForExam } from "@/actions/examActions";
+import { ExamType, StudentType } from "@/db/models/Exam";
 import LoadingIndicator from "../LoadingIndicator";
 import Link from "next/link";
 
+export type StudentExamTableDataProps = {
+  exam: ExamType;
+  studentInExam?: StudentType;
+  handleRegister(): void;
+  handleCancelRegistration(): void;
+  loading: boolean;
+};
+
 export default function StudentExamTableData({
   exam,
-  userId,
-}: {
-  exam: ExamType;
-  userId: string;
-}) {
-  const [examData, setExamData] = useState(exam);
-  const [loading, setLoading] = useState(false);
-
-  async function handleRegister() {
-    setLoading(true);
-    const { updatedExam } = await registerForExam(examData._id, userId);
-    if (updatedExam) {
-      setExamData(updatedExam);
-    }
-    setLoading(false);
-  }
-
-  async function handleCancelRegistration() {
-    setLoading(true);
-    const { updatedExam } = await cancelExamRegistration(examData._id, userId);
-    if (updatedExam) {
-      setExamData(updatedExam);
-    }
-    setLoading(false);
-  }
-
-  const studentInExam = examData.students.find(
-    (stu) => stu.user._id === userId,
-  );
-
+  handleCancelRegistration,
+  handleRegister,
+  loading,
+  studentInExam,
+}: StudentExamTableDataProps) {
   const registered = studentInExam?.status === "registered";
 
   const status = studentInExam?.status || "unregistered";
@@ -52,8 +34,8 @@ export default function StudentExamTableData({
 
   return (
     <tr className="border-b">
-      <td className="w-2/5 p-2">{examData.name}</td>
-      <td className="w-1/5 p-2">{format(examData.date, "PP")}</td>
+      <td className="w-2/5 p-2">{exam.name}</td>
+      <td className="w-1/5 p-2">{format(exam.date, "PP")}</td>
       <td className="w-1/5 p-2">
         <span
           className={`rounded-full p-1 px-2 text-sm capitalize text-white ${statusColor}`}

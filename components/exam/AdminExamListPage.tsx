@@ -6,7 +6,7 @@ import BackButton from "../BackButton";
 
 export default function AdminExamListPage({ exams }: { exams: ExamType[] }) {
   return (
-    <div className="flex flex-1 flex-col gap-4 p-6 px-[5%] text-sm">
+    <div className="flex flex-1 flex-col gap-4 p-6 px-[5%]">
       <div className="flex items-center justify-between">
         <BackButton />
         <h1 className="text-xl font-medium sm:text-2xl">Manage Exams</h1>

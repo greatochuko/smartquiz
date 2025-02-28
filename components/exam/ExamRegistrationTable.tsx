@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { StudentType } from "@/db/models/Exam";
 import ExamRegistrationTableData from "./ExamRegistrationTableData";
-import ExamRegistrationCard from "./ExamRegistrationTableCard";
+import ExamRegistrationCard from "./ExamRegistrationCard";
 import {
   acceptRegistrationRequest,
   cancelExamRegistration,
