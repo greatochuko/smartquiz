@@ -36,7 +36,7 @@ export default function FeaturesSection() {
         </h3>
         <div className="mt-10 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
           {features.map((feature, index) => (
-            <div key={index} className="rounded-lg p-6 shadow">
+            <div key={index} className="rounded-lg bg-blue-50 p-6 shadow">
               <h4 className="text-xl font-semibold text-blue-600">
                 {feature.title}
               </h4>
