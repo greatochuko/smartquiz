@@ -2,6 +2,7 @@
 
 import connectDB from "@/db/connectDB";
 import Exam, { ExamType } from "@/db/models/Exam";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 type ExamDataType = {
@@ -36,7 +37,7 @@ export async function updateExam(examId: string, examData: ExamDataType) {
     await connectDB();
     const updatedExam: ExamType | null = await Exam.findByIdAndUpdate(
       examId,
-      examData
+      examData,
     );
     if (!updatedExam) throw new Error("Unable to update exam");
     canRedirect = true;
@@ -69,7 +70,7 @@ export async function registerForExam(examId: string, userId: string) {
       examId,
       {
         $push: { students: { user: userId, status: "requested" } },
-      }
+      },
     );
     if (!examToUpdated) throw new Error("Unable to register for exam");
 
@@ -78,8 +79,8 @@ export async function registerForExam(examId: string, userId: string) {
         await Exam.findById(examId).populate({
           path: "students.user",
           select: "firstName lastName",
-        })
-      )
+        }),
+      ),
     );
     return { updatedExam, error: null };
   } catch (err) {
@@ -106,9 +107,10 @@ export async function cancelExamRegistration(examId: string, userId: string) {
         await Exam.findById(examId).populate({
           path: "students.user",
           select: "firstName lastName",
-        })
-      )
+        }),
+      ),
     );
+    revalidatePath("/", "layout");
     return { updatedExam, error: null };
   } catch (err) {
     const error = err as Error;
@@ -122,7 +124,7 @@ export async function cancelExamRegistration(examId: string, userId: string) {
 
 export async function acceptRegistrationRequest(
   examId: string,
-  userId: string
+  userId: string,
 ) {
   try {
     await connectDB();
@@ -134,11 +136,12 @@ export async function acceptRegistrationRequest(
       {
         new: true,
         arrayFilters: [{ "elem.user": userId }],
-      }
+      },
     );
     if (!examToUpdate)
       throw new Error("Unable to cancel registeration for exam");
 
+    revalidatePath("/", "layout");
     return { error: null };
   } catch (err) {
     const error = err as Error;
@@ -151,7 +154,7 @@ export async function acceptRegistrationRequest(
 
 export async function rejectRegistrationRequest(
   examId: string,
-  userId: string
+  userId: string,
 ) {
   try {
     await connectDB();
@@ -163,10 +166,12 @@ export async function rejectRegistrationRequest(
       {
         new: true,
         arrayFilters: [{ "elem.user": userId }],
-      }
+      },
     );
     if (!examToUpdate)
       throw new Error("Unable to cancel registeration for exam");
+
+    revalidatePath("/", "layout");
     return { error: null };
   } catch (err) {
     const error = err as Error;

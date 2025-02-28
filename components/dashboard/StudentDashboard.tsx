@@ -12,30 +12,30 @@ export default async function StudentDashboard() {
   const { data: exams } = await getExams();
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 p-6">
+    <div className="flex-1 px-[5%] py-6 text-gray-900">
       {/* Stats Section */}
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-base lg:text-lg font-medium">Total Exams</h2>
-          <p className="text-3xl font-semibold mt-2">12</p>
+      <section className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div className="rounded-lg bg-white p-6 shadow-md">
+          <h2 className="text-base font-medium lg:text-lg">Total Exams</h2>
+          <p className="mt-2 text-3xl font-semibold">12</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-base lg:text-lg font-medium">Upcoming Exams</h2>
-          <p className="text-3xl font-semibold mt-2">4</p>
+        <div className="rounded-lg bg-white p-6 shadow-md">
+          <h2 className="text-base font-medium lg:text-lg">Upcoming Exams</h2>
+          <p className="mt-2 text-3xl font-semibold">4</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-base lg:text-lg font-medium">Completed Exams</h2>
-          <p className="text-3xl font-semibold mt-2">8</p>
+        <div className="rounded-lg bg-white p-6 shadow-md">
+          <h2 className="text-base font-medium lg:text-lg">Completed Exams</h2>
+          <p className="mt-2 text-3xl font-semibold">8</p>
         </div>
       </section>
 
       {/* Recent Exams */}
       <section className="mt-8">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold mb-4">Recent Exams</h2>{" "}
+          <h2 className="mb-4 text-xl font-semibold">Recent Exams</h2>{" "}
           <Link
             href={"/dashboard/exams"}
-            className="hover:underline text-blue-600"
+            className="text-blue-600 hover:underline"
           >
             View all
           </Link>

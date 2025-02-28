@@ -23,40 +23,60 @@ export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
       setError(error);
     } else {
       setExamList((curr) =>
-        curr.filter((exam) => exam._id !== examToDelete._id)
+        curr.filter((exam) => exam._id !== examToDelete._id),
       );
       setExamToDelete(null);
     }
     setLoading(false);
   }
 
+  const getRegisteredStudents = (exam: ExamType) => {
+    return exam.students.filter((student) => student.status === "registered")
+      .length;
+  };
+
+  const getUnRegisteredStudents = (exam: ExamType) => {
+    return exam.students.filter((student) => student.status !== "registered")
+      .length;
+  };
+
   return (
     <>
       {/* Desktop View - Table */}
-      <div className="hidden sm:block ">
+      <div className="hidden rounded-md bg-white shadow-md sm:block">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b bg-gray-100">
-              <th className="text-left p-2 font-medium">Exam Name</th>
-              <th className="text-left p-2 font-medium">Date</th>
-              <th className="text-left p-2 font-medium">Students</th>
-              <th className="text-left p-2 font-medium">Actions</th>
+            <tr className="border-b">
+              <th className="w-1/5 p-2 pl-4 text-left font-medium">
+                Exam Name
+              </th>
+              <th className="w-1/5 p-2 text-left font-medium">Date</th>
+              <th className="w-1/5 p-2 text-left font-medium">
+                Registered Students
+              </th>
+              <th className="w-1/5 p-2 text-left font-medium">
+                Pending Students
+              </th>
+              <th className="w-1/5 p-2 pr-4 text-left font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
             {examList.map((exam) => (
               <tr key={exam._id} className="border-b">
-                <td className="p-2">{exam.name}</td>
+                <td className="p-2 pl-4">
+                  <span className="line-clamp-1">{exam.name}</span>
+                </td>
                 <td className="p-2">{format(exam.date, "PPP")}</td>
-                <td className="p-2">{exam.students.length}</td>
-                <td className="p-2 flex gap-2">
+                <td className="p-2">{getRegisteredStudents(exam)}</td>
+                <td className="p-2">{getUnRegisteredStudents(exam)}</td>
+                <td className="flex gap-2 p-2 pr-4">
                   <Link href={`/dashboard/exams/${exam._id}/edit`}>
                     <Button
                       variant={"ghost"}
                       className="h-fit p-2 hover:bg-blue-50"
                       size={"sm"}
                     >
-                      <PencilIcon className="text-blue-600 w-4 h-4" />
+                      <PencilIcon className="h-4 w-4 text-blue-600" />
                     </Button>
                   </Link>
                   <Button
@@ -65,7 +85,7 @@ export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
                     size={"sm"}
                     onClick={() => setExamToDelete(exam)}
                   >
-                    <TrashIcon className="text-rose-600 w-4 h-4" />
+                    <TrashIcon className="h-4 w-4 text-rose-600" />
                   </Button>
                   <Link href={`/dashboard/exams/${exam._id}/students`}>
                     <Button
@@ -73,7 +93,7 @@ export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
                       className="h-fit p-2 hover:bg-amber-50"
                       size={"sm"}
                     >
-                      <UserIcon className="text-amber-600 w-4 h-4" />
+                      <UserIcon className="h-4 w-4 text-amber-600" />
                     </Button>
                   </Link>
                 </td>
@@ -84,29 +104,29 @@ export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
       </div>
 
       {/* Mobile View - Cards */}
-      <div className="sm:hidden flex flex-col gap-4">
+      <div className="flex flex-col gap-4 sm:hidden">
         {examList.map((exam) => (
           <div
             key={exam._id}
-            className="border p-4 rounded-lg shadow-md bg-white"
+            className="flex flex-col gap-1 rounded-lg border bg-white p-4 shadow-md"
           >
-            <h2 className="text-lg font-semibold">{exam.name}</h2>
+            <h2 className="text-lg font-medium">{exam.name}</h2>
             <p className="text-gray-600">Date: {format(exam.date, "PPP")}</p>
             <p className="text-gray-600">Students: {exam.students.length}</p>
             <div className="mt-2 flex gap-2">
               <Link href={`/dashboard/exams/${exam._id}/edit`}>
-                <Button className="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-600/90 h-fit">
+                <Button className="h-fit rounded-md bg-blue-500 px-3 py-1.5 text-white hover:bg-blue-500/90">
                   Edit
                 </Button>
               </Link>
               <Button
                 onClick={() => setExamToDelete(exam)}
-                className="bg-rose-600 text-white px-3 py-1.5 rounded-md hover:bg-rose-600/90 h-fit"
+                className="h-fit rounded-md bg-rose-500 px-3 py-1.5 text-white hover:bg-rose-500/90"
               >
                 Delete
               </Button>
               <Link href={`/dashboard/exams/${exam._id}/edit`}>
-                <Button className="bg-amber-600 text-white px-3 py-1.5 rounded-md hover:bg-amber-600/90 h-fit">
+                <Button className="h-fit rounded-md bg-amber-500 px-3 py-1.5 text-white hover:bg-amber-500/90">
                   Students
                 </Button>
               </Link>
@@ -117,9 +137,9 @@ export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
 
       {/* Delete Course Modal */}
       {examToDelete && (
-        <div className="fixed inset-0 flex items-center text-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Confirm Delete</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 text-center">
+          <div className="rounded-lg bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-xl font-semibold">Confirm Delete</h2>
             <p>
               Are you sure you want to delete{" "}
               <span className="font-semibold">{examToDelete.name}</span>?
@@ -127,14 +147,14 @@ export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
             <Error message={error} />
             <div className="mt-4 flex justify-end">
               <button
-                className="bg-gray-100 hover:bg-gray-200 duration-200 border font-medium px-4 py-2 rounded mr-2"
+                className="mr-2 rounded border bg-gray-100 px-4 py-2 font-medium duration-200 hover:bg-gray-200"
                 onClick={() => setExamToDelete(null)}
               >
                 Cancel
               </button>
               <button
                 disabled={loading}
-                className="bg-rose-600 hover:bg-rose-600/90 duration-200 font-medium text-white px-4 py-2 rounded"
+                className="rounded bg-rose-600 px-4 py-2 font-medium text-white duration-200 hover:bg-rose-600/90"
                 onClick={handleDeleteExam}
               >
                 {loading ? <LoadingIndicator color="#fff" /> : "Delete"}

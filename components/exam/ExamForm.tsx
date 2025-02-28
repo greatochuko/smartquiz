@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { format, isPast } from "date-fns";
+import { format, isPast, isToday } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { createExam, updateExam } from "@/actions/examActions";
 import { ExamType } from "@/db/models/Exam";
@@ -37,7 +37,7 @@ export default function ExamForm({
   const [questions, setQuestions] = useState<QuestionDataType[]>(
     exam?.questions || [
       { _id: "1", text: "", options: ["", "", "", ""], answer: 0 },
-    ]
+    ],
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -57,10 +57,10 @@ export default function ExamForm({
   function handleQuestionChange<T extends keyof QuestionDataType>(
     index: number,
     field: T,
-    value: QuestionDataType[T]
+    value: QuestionDataType[T],
   ) {
     const updatedQuestions = questions.map((q, i) =>
-      i === index ? { ...q, [field]: value } : q
+      i === index ? { ...q, [field]: value } : q,
     );
     setQuestions(updatedQuestions);
   }
@@ -73,7 +73,7 @@ export default function ExamForm({
     !questions.length ||
     questions.some(
       (question) =>
-        !question.text || question.options.some((option) => !option.trim())
+        !question.text || question.options.some((option) => !option.trim()),
     );
 
   async function handleSubmit(e: React.FormEvent) {
@@ -102,7 +102,7 @@ export default function ExamForm({
       <Input
         type="text"
         placeholder="Exam Name"
-        className="w-full p-2 border rounded-md ring-0 focus-visible:ring-blue-400"
+        className="w-full rounded-md border p-2 ring-0 focus-visible:ring-blue-400"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
@@ -112,7 +112,7 @@ export default function ExamForm({
             variant={"outline"}
             className={cn(
               "w-full justify-start text-left font-normal focus-visible:ring-blue-400",
-              !date && "text-muted-foreground"
+              !date && "text-muted-foreground",
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -122,7 +122,7 @@ export default function ExamForm({
         <PopoverContent className="w-auto p-0">
           <Calendar
             mode="single"
-            disabled={(date) => isPast(date)}
+            disabled={(date) => isPast(date) && !isToday(date)}
             selected={date}
             onSelect={setDate}
             initialFocus
@@ -132,7 +132,7 @@ export default function ExamForm({
       <Input
         type="number"
         placeholder="Duration (minutes)"
-        className="w-full p-2 border rounded-md ring-0 focus-visible:ring-blue-400"
+        className="w-full rounded-md border p-2 ring-0 focus-visible:ring-blue-400"
         value={duration}
         onChange={(e) => setDuration(e.target.value)}
       />
@@ -140,9 +140,9 @@ export default function ExamForm({
       {questions.map((q, index) => (
         <div
           key={q._id}
-          className="p-3 border rounded-md mb-2 flex flex-col gap-2"
+          className="mb-2 flex flex-col gap-2 rounded-md border p-3"
         >
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <h4>Question {index + 1}</h4>
             {questions.length > 1 && (
               <Button
@@ -158,14 +158,14 @@ export default function ExamForm({
           </div>
           <Textarea
             placeholder="Question Text"
-            className="w-full p-2 border rounded-md ring-0 focus-visible:ring-blue-400"
+            className="w-full rounded-md border p-2 ring-0 focus-visible:ring-blue-400"
             value={q.text}
             onChange={(e) =>
               handleQuestionChange(index, "text", e.target.value)
             }
           />
           {q.options.map((option, optIndex) => (
-            <div className="flex gap-2 items-center" key={optIndex}>
+            <div className="flex items-center gap-2" key={optIndex}>
               <input
                 type="radio"
                 name={`option-${optIndex}`}
@@ -177,7 +177,7 @@ export default function ExamForm({
               <Input
                 type="text"
                 placeholder={`Option ${optIndex + 1}`}
-                className="w-full p-2 border rounded-md focus-visible:ring-blue-400"
+                className="w-full rounded-md border p-2 focus-visible:ring-blue-400"
                 value={option}
                 onChange={(e) => {
                   const updatedOptions = [...q.options];
@@ -193,7 +193,7 @@ export default function ExamForm({
       <div className="flex justify-between">
         <button
           type="button"
-          className="bg-blue-600 text-white font-medium px-4 py-2 rounded-md hover:bg-blue-600/90 duration-200"
+          className="rounded-md bg-blue-600 px-4 py-2 font-medium text-white duration-200 hover:bg-blue-600/90"
           onClick={addQuestion}
         >
           Add Question
@@ -201,7 +201,7 @@ export default function ExamForm({
         <button
           disabled={cannotSubmit}
           type="submit"
-          className="bg-green-600 font-medium text-white w-32 px-4 py-2 rounded-md hover:bg-green-600/90 duration-200 disabled:bg-green-600/50 disabled:cursor-not-allowed"
+          className="w-32 rounded-md bg-green-600 px-4 py-2 font-medium text-white duration-200 hover:bg-green-600/90 disabled:cursor-not-allowed disabled:bg-green-600/50"
         >
           {loading ? (
             <LoadingIndicator color="#fff" />

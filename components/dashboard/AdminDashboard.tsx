@@ -14,34 +14,34 @@ const recentActions = [
 
 export default function AdminDashboard() {
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 p-6">
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="flex-1 px-[5%] py-6 text-gray-900">
+      <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => (
-          <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-base lg:text-lg font-medium">{stat.title}</h2>
-            <p className="text-3xl font-semibold mt-2">{stat.value}</p>
+          <div key={index} className="rounded-lg bg-white p-6 shadow-md">
+            <h2 className="text-base font-medium lg:text-lg">{stat.title}</h2>
+            <p className="mt-2 text-3xl font-semibold">{stat.value}</p>
           </div>
         ))}
 
-        <div className="bg-white p-6 rounded-lg shadow-md text-center">
-          <h3 className="text-base md:text-lg font-medium mb-2">
+        <div className="rounded-lg bg-white p-6 text-center shadow-md">
+          <h3 className="mb-2 text-base font-medium md:text-lg">
             Manage Exams
           </h3>
           <Link
             href={"/dashboard/exams"}
-            className="bg-blue-600 text-white text-sm px-4 py-2 block w-fit mx-auto rounded-lg hover:bg-blue-600/90 duration-200"
+            className="mx-auto block w-fit rounded-lg bg-blue-600 px-4 py-2 text-sm text-white duration-200 hover:bg-blue-600/90"
           >
             View Exams
           </Link>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md text-center">
-          <h3 className="text-base md:text-lg font-medium mb-2">
+        <div className="rounded-lg bg-white p-6 text-center shadow-md">
+          <h3 className="mb-2 text-base font-medium md:text-lg">
             Manage Results
           </h3>
           <Link
             href={"/dashboard/results"}
-            className="bg-blue-600 text-white text-sm px-4 py-2 block w-fit mx-auto rounded-lg hover:bg-blue-600/90 duration-200"
+            className="mx-auto block w-fit rounded-lg bg-blue-600 px-4 py-2 text-sm text-white duration-200 hover:bg-blue-600/90"
           >
             View Results
           </Link>
@@ -50,12 +50,12 @@ export default function AdminDashboard() {
 
       {/* Recent Actions */}
       <section className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Recent Actions</h2>
-        <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
+        <h2 className="mb-4 text-xl font-semibold">Recent Actions</h2>
+        <div className="space-y-4 rounded-lg bg-white p-6 shadow-md">
           {recentActions.map((action, index) => (
             <div key={index} className="border-b pb-2">
               <p className="font-medium">{action.action}</p>
-              <p className="text-gray-500 text-sm">{action.time}</p>
+              <p className="text-sm text-gray-500">{action.time}</p>
             </div>
           ))}
         </div>

@@ -29,14 +29,14 @@ const features = [
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="py-16 bg-white">
+    <section id="features" className="bg-white py-16">
       <div className="screen-container px-6">
-        <h3 className="text-3xl font-bold text-center text-gray-800">
+        <h3 className="text-center text-3xl font-bold text-gray-800">
           Key Features
         </h3>
-        <div className="mt-10 grid sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <div className="mt-10 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
           {features.map((feature, index) => (
-            <div key={index} className="bg-gray-100 p-6 rounded-lg shadow">
+            <div key={index} className="rounded-lg p-6 shadow">
               <h4 className="text-xl font-semibold text-blue-600">
                 {feature.title}
               </h4>

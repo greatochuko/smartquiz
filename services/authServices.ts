@@ -16,9 +16,7 @@ export async function getSession(): Promise<UserType | null> {
     const { user, error } = await res.json();
     if (error) throw new Error(error);
     return user;
-  } catch (err) {
-    const error = err as Error;
-    console.log("Error getting session: ", error.message);
+  } catch {
     return null;
   }
 }

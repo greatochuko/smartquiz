@@ -1,9 +1,8 @@
 import React from "react";
 import { StudentType } from "@/db/models/Exam";
 import { Button } from "../ui/button";
-import LoadingIndicator from "../LoadingIndicator";
 
-type ExamRegistrationTableDataProps = {
+type ExamRegistrationTableCardProps = {
   loading: {
     acceptLoading: boolean;
     rejectLoading: boolean;
@@ -15,68 +14,66 @@ type ExamRegistrationTableDataProps = {
   student: StudentType;
 };
 
-export default function ExamRegistrationTableData({
+export default function ExamRegistrationCard({
   student,
   handleAccept,
   handleReject,
   handleRemoveStudent,
   loading,
-}: ExamRegistrationTableDataProps) {
+}: ExamRegistrationTableCardProps) {
   const { acceptLoading, anyLoading, rejectLoading } = loading;
 
   const statusColor =
     student.status === "registered"
-      ? "bg-green-500"
+      ? "text-green-500"
       : student.status === "requested"
-        ? "bg-amber-500"
-        : "bg-rose-500";
+        ? "text-amber-500"
+        : "text-rose-500";
 
   return (
-    <tr className="border-b">
-      <td className="w-2/4 p-2 pl-4">
+    <div
+      key={student.user._id}
+      className="rounded-lg border bg-white p-4 shadow-md"
+    >
+      <h2 className="text-lg font-medium">
         {student.user.firstName} {student.user.lastName}
-      </td>
-      <td className="w-1/4 p-2">
-        <span
-          className={`rounded-full p-1 px-2 text-sm capitalize text-white ${statusColor}`}
-        >
+      </h2>
+      <p className="text-gray-600">
+        Status:{" "}
+        <span className={`p-2 font-medium capitalize ${statusColor}`}>
           {student.status}
         </span>
-      </td>
-      <td className="flex w-1/4 gap-2 p-2 pr-4">
+      </p>
+      <div className="mt-2 flex gap-2">
         {student.status === "requested" ? (
           <>
             <Button
-              variant={"ghost"}
-              className="h-fit p-2 text-green-600 hover:bg-green-50 hover:text-green-700"
+              className="h-fit bg-green-600 px-3 py-1.5 hover:bg-green-600/90"
               size={"sm"}
               onClick={handleAccept}
               disabled={anyLoading}
             >
-              {acceptLoading ? <LoadingIndicator color="#16a34a " /> : "Accept"}
+              {acceptLoading ? "Accepting..." : "Accept"}
             </Button>
             <Button
-              variant={"ghost"}
-              className="h-fit p-2 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
+              className="h-fit bg-rose-600 px-3 py-1.5 hover:bg-rose-600/90"
               size={"sm"}
               onClick={handleReject}
               disabled={anyLoading}
             >
-              {rejectLoading ? <LoadingIndicator color="#f43f5e " /> : "Reject"}
+              {rejectLoading ? "Rejecting..." : "Reject"}
             </Button>
           </>
         ) : (
           <Button
-            variant={"ghost"}
-            className="h-fit p-2 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
-            size={"sm"}
             onClick={handleRemoveStudent}
             disabled={anyLoading}
+            className="h-fit rounded-md bg-rose-600 px-3 py-1.5 text-white hover:bg-rose-600/90"
           >
-            {rejectLoading ? <LoadingIndicator color="#f43f5e " /> : "Remove"}
+            {loading ? "Removing..." : "Remove"}
           </Button>
         )}
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 }

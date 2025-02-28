@@ -3,8 +3,11 @@ import React from "react";
 
 export default function Hero() {
   return (
-    <section className="text-center py-20 bg-blue-50">
-      <div className="screen-container px-6">
+    <section
+      className="relative bg-cover bg-center text-center"
+      style={{ backgroundImage: "url('/hero-background.jpg')" }}
+    >
+      <div className="bg-white/30 px-[5%] py-20">
         <h2 className="text-4xl font-extrabold text-blue-700">
           Simplify Online Assessments
         </h2>
@@ -13,7 +16,7 @@ export default function Hero() {
         </p>
         <Link
           href="/signup"
-          className="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+          className="mt-6 inline-block rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
         >
           Get Started
         </Link>

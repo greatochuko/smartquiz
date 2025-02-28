@@ -45,17 +45,21 @@ export default function StudentExamTableData({
 
   const statusColor =
     status === "registered"
-      ? "text-green-500"
+      ? "bg-green-500"
       : status === "requested"
-        ? "text-amber-500"
-        : "text-rose-500";
+        ? "bg-amber-500"
+        : "bg-rose-500";
 
   return (
     <tr className="border-b">
       <td className="w-2/5 p-2">{examData.name}</td>
       <td className="w-1/5 p-2">{format(examData.date, "PP")}</td>
-      <td className={`w-1/5 p-2 text-sm capitalize ${statusColor}`}>
-        {status}
+      <td className="w-1/5 p-2">
+        <span
+          className={`rounded-full p-1 px-2 text-sm capitalize text-white ${statusColor}`}
+        >
+          {status}
+        </span>
       </td>
       <td className={`w-1/5 p-2`}>
         {registered ? (
