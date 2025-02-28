@@ -93,12 +93,18 @@ export async function registerForExam(examId: string, userId: string) {
   }
 }
 
-export async function cancelExamRegistration(examId: string, userId: string) {
+export async function cancelExamRegistration(
+  examId: string,
+  studentUserId: string,
+) {
   try {
     await connectDB();
-    const examToUpdate: ExamType | null = await Exam.findByIdAndUpdate(examId, {
-      $pull: { students: { user: userId } },
-    });
+    const examToUpdate = await Exam.findByIdAndUpdate(
+      examId,
+      { $pull: { students: { user: studentUserId } } },
+      { new: true },
+    );
+
     if (!examToUpdate)
       throw new Error("Unable to cancel registeration for exam");
 
@@ -124,60 +130,50 @@ export async function cancelExamRegistration(examId: string, userId: string) {
 
 export async function acceptRegistrationRequest(
   examId: string,
-  userId: string,
+  studentUserId: string,
 ) {
   try {
     await connectDB();
-    const examToUpdate = await Exam.findByIdAndUpdate(
-      examId,
-      {
-        $set: { "students.$[elem].status": "registered" },
-      },
-      {
-        new: true,
-        arrayFilters: [{ "elem.user": userId }],
-      },
+    const updatedExam = await Exam.findOneAndUpdate(
+      { _id: examId, "students.user": studentUserId },
+      { $set: { "students.$.status": "registered" } },
+      { new: true },
     );
-    if (!examToUpdate)
-      throw new Error("Unable to cancel registeration for exam");
+
+    if (!updatedExam) throw new Error("Unable to accept registration for exam");
 
     revalidatePath("/", "layout");
     return { error: null };
   } catch (err) {
     const error = err as Error;
-    console.log("Error requesting registration: ", error.message);
+    console.log("Error accepting registration: ", error.message);
     return {
-      error: "An error occured requesting exam registration",
+      error: "An error occured accepting exam registration",
     };
   }
 }
 
 export async function rejectRegistrationRequest(
   examId: string,
-  userId: string,
+  studentUserId: string,
 ) {
   try {
     await connectDB();
-    const examToUpdate = await Exam.findByIdAndUpdate(
-      examId,
-      {
-        $set: { "students.$[elem].status": "rejected" },
-      },
-      {
-        new: true,
-        arrayFilters: [{ "elem.user": userId }],
-      },
+    const updatedExam = await Exam.findOneAndUpdate(
+      { _id: examId, "students.user": studentUserId },
+      { $set: { "students.$.status": "rejected" } },
+      { new: true },
     );
-    if (!examToUpdate)
-      throw new Error("Unable to cancel registeration for exam");
+
+    if (!updatedExam) throw new Error("Unable to reject registration for exam");
 
     revalidatePath("/", "layout");
     return { error: null };
   } catch (err) {
     const error = err as Error;
-    console.log("Error requesting registration: ", error.message);
+    console.log("Error rejecting registration: ", error.message);
     return {
-      error: "An error occured requesting exam registration",
+      error: "An error occured rejecting exam registration",
     };
   }
 }

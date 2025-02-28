@@ -29,7 +29,7 @@ export default function ExamRegistrationTable({
     if (error === null) {
       setStudentList((curr) =>
         curr.map((student) =>
-          student._id === studentId
+          student.user._id === studentId
             ? { ...student, status: "registered" }
             : student,
         ),
@@ -44,7 +44,7 @@ export default function ExamRegistrationTable({
     if (error === null) {
       setStudentList((curr) =>
         curr.map((student) =>
-          student._id === studentId
+          student.user._id === studentId
             ? { ...student, status: "rejected" }
             : student,
         ),
@@ -57,7 +57,9 @@ export default function ExamRegistrationTable({
     setLoading(true);
     const { error } = await cancelExamRegistration(examId, studentId);
     if (error === null) {
-      setStudentList((curr) => curr.filter((stu) => stu._id !== studentId));
+      setStudentList((curr) =>
+        curr.filter((student) => student.user._id !== studentId),
+      );
     }
     setLoading(false);
   }
@@ -88,9 +90,11 @@ export default function ExamRegistrationTable({
                 student={student}
                 key={student._id}
                 loading={{ anyLoading, acceptLoading, rejectLoading }}
-                handleReject={() => handleReject(student._id)}
-                handleAccept={() => handleAccept(student._id)}
-                handleRemoveStudent={() => handleRemoveStudent(student._id)}
+                handleReject={() => handleReject(student.user._id)}
+                handleAccept={() => handleAccept(student.user._id)}
+                handleRemoveStudent={() =>
+                  handleRemoveStudent(student.user._id)
+                }
               />
             ))}
           </tbody>
@@ -104,9 +108,9 @@ export default function ExamRegistrationTable({
             student={student}
             key={student._id}
             loading={{ anyLoading, acceptLoading, rejectLoading }}
-            handleReject={() => handleReject(student._id)}
-            handleAccept={() => handleAccept(student._id)}
-            handleRemoveStudent={() => handleRemoveStudent(student._id)}
+            handleReject={() => handleReject(student.user._id)}
+            handleAccept={() => handleAccept(student.user._id)}
+            handleRemoveStudent={() => handleRemoveStudent(student.user._id)}
           />
         ))}
       </div>
