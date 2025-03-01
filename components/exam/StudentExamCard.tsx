@@ -40,7 +40,7 @@ export default function StudentExamCard({
       </p>
       {registered ? (
         <Link
-          href={`/dashboard/exam/${exam._id}/start`}
+          href={`/dashboard/exams/${exam._id}/onboarding`}
           className="h-fit rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white duration-200 hover:bg-green-600/90 disabled:cursor-not-allowed"
         >
           Take Exam

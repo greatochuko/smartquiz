@@ -177,3 +177,28 @@ export async function rejectRegistrationRequest(
     };
   }
 }
+
+export async function saveStudentExamStartTime(
+  examId: string,
+  studentUserId: string,
+) {
+  try {
+    await connectDB();
+    const updatedExam = await Exam.findOneAndUpdate(
+      { _id: examId, "students.user": studentUserId },
+      { $set: { "students.$.examStartTime": new Date() } },
+      { new: true },
+    );
+
+    if (!updatedExam) throw new Error("Unable to save student exam start time");
+
+    revalidatePath("/", "layout");
+    return { error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error saving student start time to database: ", error.message);
+    return {
+      error: "An error occured saving student start time to database",
+    };
+  }
+}

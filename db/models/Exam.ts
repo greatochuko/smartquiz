@@ -18,6 +18,7 @@ export type StudentType = {
   _id: string;
   user: UserType;
   status: "registered" | "requested" | "unregistered" | "rejected";
+  examStartTime?: Date;
 };
 
 export type ExamType = {
@@ -51,6 +52,7 @@ const ExamSchema = new mongoose.Schema<ExamType>(
             required: true,
             enum: ["registered", "requested", "unregistered", "rejected"],
           },
+          examStartTime: { type: Date },
         },
       ],
       default: [],
@@ -61,7 +63,7 @@ const ExamSchema = new mongoose.Schema<ExamType>(
       ref: "User",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Exam = mongoose.models?.Exam || mongoose.model("Exam", ExamSchema);
