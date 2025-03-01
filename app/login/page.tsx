@@ -14,9 +14,7 @@ export default function LoginPage() {
         >
           SmartQuizz
         </Link>
-        <h2 className="text-center text-2xl font-bold text-blue-600">
-          Login to ExamEase
-        </h2>
+        <h2 className="text-center text-2xl font-bold text-blue-600">Login</h2>
         <p className="mt-2 text-center text-gray-600">
           Access your exams and results
         </p>

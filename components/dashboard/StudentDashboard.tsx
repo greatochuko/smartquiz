@@ -5,6 +5,29 @@ import StudentExamsTable from "../exam/StudentExamsTable";
 import { getSession } from "@/services/authServices";
 import { redirect } from "next/navigation";
 
+const stats = [
+  {
+    title: "Total Exams",
+    value: 12,
+    className: "text-blue-600",
+  },
+  {
+    title: "Upcoming Exams",
+    value: 4,
+    className: "text-amber-600",
+  },
+  {
+    title: "Completed Exams",
+    value: 7,
+    className: "text-green-600",
+  },
+  {
+    title: "Missed Exams",
+    value: 1,
+    className: "text-rose-600",
+  },
+];
+
 export default async function StudentDashboard() {
   const user = await getSession();
   if (!user) redirect("/login");
@@ -14,19 +37,18 @@ export default async function StudentDashboard() {
   return (
     <div className="flex-1 px-[5%] py-6 text-gray-900">
       {/* Stats Section */}
-      <section className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        <div className="rounded-lg bg-white p-6 shadow-md">
-          <h2 className="text-base font-medium lg:text-lg">Total Exams</h2>
-          <p className="mt-2 text-3xl font-semibold">12</p>
-        </div>
-        <div className="rounded-lg bg-white p-6 shadow-md">
-          <h2 className="text-base font-medium lg:text-lg">Upcoming Exams</h2>
-          <p className="mt-2 text-3xl font-semibold">4</p>
-        </div>
-        <div className="rounded-lg bg-white p-6 shadow-md">
-          <h2 className="text-base font-medium lg:text-lg">Completed Exams</h2>
-          <p className="mt-2 text-3xl font-semibold">8</p>
-        </div>
+      <section className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:gap-6">
+        {stats.map((stat) => (
+          <div
+            key={stat.title}
+            className={`flex flex-col justify-between rounded-lg bg-white p-4 shadow lg:p-6 ${stat.className}`}
+          >
+            <h2 className="text-base font-medium lg:text-lg">{stat.title}</h2>
+            <p className="mt-2 text-2xl font-medium sm:text-3xl">
+              {stat.value}
+            </p>
+          </div>
+        ))}
       </section>
 
       {/* Recent Exams */}

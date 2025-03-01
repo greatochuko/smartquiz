@@ -46,7 +46,7 @@ export default function StudentExamTableData({
       <td className={`w-1/5 p-2`}>
         {registered ? (
           <Link
-            href={`/exam/${exam._id}/start`}
+            href={`/dashboard/exam/${exam._id}/start`}
             className="h-fit rounded-md p-2 text-sm font-medium text-green-600 duration-200 hover:bg-green-50 hover:text-green-700 disabled:cursor-not-allowed"
           >
             Take Exam
