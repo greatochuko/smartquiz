@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 import { UserType } from "./User";
-import { ExamType } from "./Exam";
+import { ExamType, StudentAnswerType } from "./Exam";
 
 export type ResultType = {
   _id: string;
   student: UserType;
   exam: ExamType;
-  // correctAnswers: number;
+  score: number;
+  answers: StudentAnswerType[];
   createdAt: string;
   updatedAt: string;
 } & mongoose.Document;
@@ -22,6 +23,11 @@ const ResultSchema = new mongoose.Schema<ResultType>(
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
       ref: "User",
+    },
+    score: { type: Number },
+    answers: {
+      type: [{ questionId: { type: String }, answer: { type: String } }],
+      default: [],
     },
   },
   { timestamps: true },

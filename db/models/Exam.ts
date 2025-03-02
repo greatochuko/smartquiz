@@ -19,7 +19,12 @@ export type StudentAnswerType = { questionId: string; answer: string };
 export type StudentType = {
   _id: string;
   user: UserType;
-  status: "registered" | "requested" | "unregistered" | "rejected";
+  status:
+    | "registered"
+    | "requested"
+    | "unregistered"
+    | "rejected"
+    | "submitted";
   examStartTime?: Date;
   answers: StudentAnswerType[];
   score: number;
@@ -54,7 +59,13 @@ const ExamSchema = new mongoose.Schema<ExamType>(
           status: {
             type: String,
             required: true,
-            enum: ["registered", "requested", "unregistered", "rejected"],
+            enum: [
+              "registered",
+              "requested",
+              "unregistered",
+              "rejected",
+              "submitted",
+            ],
           },
           examStartTime: { type: Date },
           answers: {

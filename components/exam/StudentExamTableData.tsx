@@ -23,7 +23,11 @@ export default function StudentExamTableData({
 }: StudentExamTableDataProps) {
   const registered = studentInExam?.status === "registered";
 
+  const submitted = studentInExam?.status === "submitted";
+
   const status = studentInExam?.status || "unregistered";
+
+  console.log({ status });
 
   const statusColor =
     status === "registered"
@@ -32,7 +36,9 @@ export default function StudentExamTableData({
         ? "bg-amber-500"
         : status === "unregistered"
           ? "bg-zinc-500"
-          : "bg-rose-500";
+          : status === "submitted"
+            ? "bg-purple-500"
+            : "bg-rose-500";
 
   return (
     <tr className="border-b">
@@ -46,14 +52,25 @@ export default function StudentExamTableData({
         </span>
       </td>
       <td className={`w-1/5 p-2`}>
-        {registered ? (
+        {submitted && (
+          <Link
+            href={`/dashboard/result`}
+            className="h-fit rounded-md p-2 text-sm font-medium text-purple-600 duration-200 hover:bg-purple-50 hover:text-purple-700 disabled:cursor-not-allowed"
+          >
+            View Result
+          </Link>
+        )}
+
+        {registered && !submitted && (
           <Link
             href={`/dashboard/exams/${exam._id}/onboarding`}
             className="h-fit rounded-md p-2 text-sm font-medium text-green-600 duration-200 hover:bg-green-50 hover:text-green-700 disabled:cursor-not-allowed"
           >
             Take Exam
           </Link>
-        ) : (
+        )}
+
+        {!registered && !submitted && (
           <Button
             variant={"ghost"}
             className={`h-fit p-2 duration-200 disabled:cursor-not-allowed ${

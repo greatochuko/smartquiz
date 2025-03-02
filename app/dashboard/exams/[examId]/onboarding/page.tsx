@@ -62,11 +62,6 @@ export default async function ExamOnboardingPage({
   const examDate = startOfDay(new Date(exam.date));
   const today = startOfDay(new Date());
 
-  console.log({
-    examDate: examDate.toDateString(),
-    today: today.toDateString(),
-  });
-
   if (isBefore(examDate, today)) {
     examStatus = "This exam has already passed.";
   } else if (isAfter(examDate, today)) {

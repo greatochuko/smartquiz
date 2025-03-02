@@ -21,6 +21,7 @@ export async function signup(userData: Partial<UserType>) {
 
     const newUser = await User.create(userData);
     const token = await signJWT({ userId: newUser._id });
+    if (!token) throw new Error("Error signing token");
 
     const cookieStore = await cookies();
     cookieStore.set("token", token);
@@ -51,6 +52,7 @@ export async function login(email: string, password: string) {
       return { data: null, error: "Invalid username and password combination" };
 
     const token = await signJWT({ userId: user._id });
+    if (!token) throw new Error("Error signing token");
 
     const cookieStore = await cookies();
     cookieStore.set("token", token);

@@ -253,9 +253,23 @@ export async function submitExam(examId: string, studentUserId: string) {
     if (prevResult) {
       redirectUrl = `/dashboard/results/${prevResult._id}`;
     } else {
+      const exam: ExamType | null = await Exam.findById(examId);
+      if (!exam) throw new Error("Exam not found");
+
+      const studentInExam = exam.students.find(
+        (student) => String(student.user) === studentUserId,
+      );
+      if (!studentInExam) throw new Error("Student not registered for exam");
+
+      studentInExam.status = "submitted";
+
+      await exam.save();
+
       const newResult: ResultType | null = await Result.create({
         exam: examId,
         student: studentUserId,
+        score: studentInExam.score,
+        answers: studentInExam.answers,
       });
 
       if (!newResult) throw new Error("Unable to submit exam");
