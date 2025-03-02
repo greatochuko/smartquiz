@@ -30,7 +30,9 @@ export default function StudentExamTableData({
       ? "bg-green-500"
       : status === "requested"
         ? "bg-amber-500"
-        : "bg-rose-500";
+        : status === "unregistered"
+          ? "bg-zinc-500"
+          : "bg-rose-500";
 
   return (
     <tr className="border-b">

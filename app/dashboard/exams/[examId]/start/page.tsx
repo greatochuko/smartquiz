@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { startOfDay, isAfter, isBefore, differenceInSeconds } from "date-fns";
 import { getSession } from "@/services/authServices";
 import QuizScreen from "@/components/exam/QuizScreen";
+import { getResult } from "@/services/resultServices";
 
 export default async function ExamStartPage({
   params,
@@ -22,6 +23,9 @@ export default async function ExamStartPage({
   );
   if (!student) redirect("/dashboard");
 
+  const { result } = await getResult(student.user._id, exam._id);
+  if (result) redirect(`/dashboard/results/${result._id}`);
+
   const examDate = startOfDay(new Date(exam.date));
   const today = startOfDay(new Date());
 
@@ -39,9 +43,10 @@ export default async function ExamStartPage({
   return (
     <QuizScreen
       exam={exam}
-      userTimeLeft={userTimeLeft}
+      studentTimeLeft={userTimeLeft}
       studentExamStartTime={student.examStartTime}
       studentUserId={student.user._id}
+      studentExamAnswers={student.answers}
     />
   );
 }

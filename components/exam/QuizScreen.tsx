@@ -1,30 +1,40 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ExamType } from "@/db/models/Exam";
+import { ExamType, StudentAnswerType } from "@/db/models/Exam";
 import LoadingIndicator from "../LoadingIndicator";
-import { saveStudentExamStartTime } from "@/actions/examActions";
+import {
+  saveStudentExamStartTime,
+  submitExam,
+  updateStudentAnswers,
+} from "@/actions/examActions";
 
 export default function QuizScreen({
   exam,
-  userTimeLeft,
+  studentTimeLeft,
   studentExamStartTime,
   studentUserId,
+  studentExamAnswers,
 }: {
   exam: ExamType;
-  userTimeLeft: number;
+  studentTimeLeft: number;
   studentExamStartTime?: Date;
   studentUserId: string;
+  studentExamAnswers: StudentAnswerType[];
 }) {
-  const [timeLeft, setTimeLeft] = useState(userTimeLeft);
+  const [timeLeft, setTimeLeft] = useState(studentTimeLeft);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState(studentExamAnswers || []);
   const [status, setStatus] = useState<
     "exam-ongoing" | "submit-modal" | "submitting"
-  >("exam-ongoing");
+  >(studentTimeLeft ? "exam-ongoing" : "submitting");
+
+  const currentQuestion = exam.questions[currentIndex];
 
   useEffect(() => {
-    if (status === "submitting") return;
+    if (status === "submitting") {
+      submitExam(exam._id, studentUserId);
+    }
 
     const updateTimer = () => {
       setTimeLeft((curr) => {
@@ -41,7 +51,7 @@ export default function QuizScreen({
     const interval = setInterval(updateTimer, 1000);
 
     return () => clearInterval(interval);
-  }, [status]);
+  }, [answers, exam._id, status, studentUserId]);
 
   useEffect(() => {
     if (studentExamStartTime) return;
@@ -49,12 +59,25 @@ export default function QuizScreen({
   }, [exam._id, studentExamStartTime, studentUserId]);
 
   const handleAnswerSelect = (questionId: string, option: string) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: option }));
+    const existingAnswerIndex = answers.findIndex(
+      (answer) => answer.questionId === questionId,
+    );
+
+    let updatedAnswers;
+    if (existingAnswerIndex !== -1) {
+      updatedAnswers = [...answers];
+      updatedAnswers[existingAnswerIndex].answer = option;
+    } else {
+      updatedAnswers = [...answers, { questionId, answer: option }];
+    }
+
+    setAnswers(updatedAnswers);
+    updateStudentAnswers(exam._id, studentUserId, updatedAnswers);
   };
 
   const handleSubmit = () => {
-    console.log("User Answers:", answers);
     setStatus("submitting");
+    submitExam(exam._id, studentUserId);
   };
 
   const hasNextQuestion = exam.questions.length > currentIndex + 1;
@@ -71,6 +94,10 @@ export default function QuizScreen({
     if (hasPrevQuestion) {
       setCurrentIndex((curr) => curr - 1);
     }
+  };
+
+  const getQuestionAnswer = (questionId: string) => {
+    return answers.find((answer) => answer.questionId === questionId)?.answer;
   };
 
   return (
@@ -91,30 +118,31 @@ export default function QuizScreen({
             </span>
           </p>
 
-          {exam?.questions?.map((q, index) => (
-            <div key={q._id} className="">
-              <p className="font-semibold">
-                {index + 1}. {q.text}
-              </p>
-              <div className="mt-2 flex flex-col gap-2">
-                {q.options.map((option, idx) => (
-                  <label
-                    key={idx}
-                    className="flex cursor-pointer items-center gap-2 rounded-lg border p-2 duration-200 hover:bg-blue-100"
-                  >
-                    <input
-                      type="radio"
-                      name={`question-${q._id}`}
-                      value={option}
-                      checked={answers[q._id] === option}
-                      onChange={() => handleAnswerSelect(q._id, option)}
-                    />
-                    {option}
-                  </label>
-                ))}
-              </div>
+          <div key={currentQuestion._id} className="">
+            <p className="font-semibold">
+              <span className="text-zinc-500">{currentIndex + 1}.</span>{" "}
+              {currentQuestion.text}
+            </p>
+            <div className="mt-2 flex flex-col gap-2">
+              {currentQuestion.options.map((option, idx) => (
+                <label
+                  key={idx}
+                  className="flex cursor-pointer items-center gap-2 rounded-lg border p-2 duration-200 hover:bg-blue-100"
+                >
+                  <input
+                    type="radio"
+                    name={`question-${currentQuestion._id}`}
+                    value={option}
+                    checked={getQuestionAnswer(currentQuestion._id) === option}
+                    onChange={() =>
+                      handleAnswerSelect(currentQuestion._id, option)
+                    }
+                  />
+                  {option}
+                </label>
+              ))}
             </div>
-          ))}
+          </div>
 
           <div className="flex justify-between gap-4">
             <button

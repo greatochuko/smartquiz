@@ -1,7 +1,8 @@
 "use server";
 
 import connectDB from "@/db/connectDB";
-import Exam, { ExamType } from "@/db/models/Exam";
+import Exam, { ExamType, StudentAnswerType } from "@/db/models/Exam";
+import Result, { ResultType } from "@/db/models/Result";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -12,7 +13,7 @@ type ExamDataType = {
   questions: {
     text: string;
     options: string[];
-    answer: number;
+    answer: string;
   }[];
 };
 
@@ -200,5 +201,74 @@ export async function saveStudentExamStartTime(
     return {
       error: "An error occured saving student start time to database",
     };
+  }
+}
+
+export async function updateStudentAnswers(
+  examId: string,
+  studentUserId: string,
+  answers: StudentAnswerType[],
+) {
+  try {
+    await connectDB();
+    const examToUpdate: ExamType | null = await Exam.findById(examId);
+    if (!examToUpdate) throw new Error("Invalid exam Id");
+
+    let score = 0;
+    for (let i = 0; i < answers.length; i++) {
+      const answer = answers[i];
+      const correctAnswer = examToUpdate.questions.find(
+        (q) => q._id.toString() === answer.questionId,
+      )?.answer;
+      if (answer.answer === correctAnswer) {
+        score++;
+      }
+    }
+
+    const updatedExam = await Exam.findOneAndUpdate(
+      { _id: examId, "students.user": studentUserId },
+      {
+        $set: { "students.$.answers": answers, "students.$.score": score },
+      },
+      { new: true },
+    );
+    if (!updatedExam) throw new Error("Unable to update student answers");
+    return { error: null, data: JSON.parse(JSON.stringify(updatedExam)) };
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error updating student answers: ", error.message);
+    return { error: "Error updating student answers", data: null };
+  }
+}
+
+export async function submitExam(examId: string, studentUserId: string) {
+  let redirectUrl;
+  try {
+    await connectDB();
+    const prevResult: ResultType | null = await Result.findOne({
+      exam: examId,
+      student: studentUserId,
+    });
+
+    if (prevResult) {
+      redirectUrl = `/dashboard/results/${prevResult._id}`;
+    } else {
+      const newResult: ResultType | null = await Result.create({
+        exam: examId,
+        student: studentUserId,
+      });
+
+      if (!newResult) throw new Error("Unable to submit exam");
+
+      redirectUrl = `/dashboard/results/${newResult._id}`;
+    }
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error submitting exam: ", error.message);
+    return {
+      error: "An error occurred submitting exam",
+    };
+  } finally {
+    if (redirectUrl) redirect(redirectUrl);
   }
 }

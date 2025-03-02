@@ -15,14 +15,7 @@ import { cn } from "@/lib/utils";
 import { format, isPast, isToday } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { createExam, updateExam } from "@/actions/examActions";
-import { ExamType } from "@/db/models/Exam";
-
-type QuestionDataType = {
-  _id: string;
-  text: string;
-  options: string[];
-  answer: number;
-};
+import { ExamType, QuestionType } from "@/db/models/Exam";
 
 export default function ExamForm({
   exam,
@@ -34,9 +27,9 @@ export default function ExamForm({
   const [name, setName] = useState(exam?.name || "");
   const [date, setDate] = useState(exam?.date);
   const [duration, setDuration] = useState(exam?.duration.toString() || "");
-  const [questions, setQuestions] = useState<QuestionDataType[]>(
+  const [questions, setQuestions] = useState<QuestionType[]>(
     exam?.questions || [
-      { _id: "1", text: "", options: ["", "", "", ""], answer: 0 },
+      { _id: "1", text: "", options: ["", "", "", ""], answer: "" },
     ],
   );
   const [loading, setLoading] = useState(false);
@@ -49,15 +42,15 @@ export default function ExamForm({
         _id: (questions.length + 1).toString(),
         text: "",
         options: ["", "", "", ""],
-        answer: 0,
+        answer: "",
       },
     ]);
   };
 
-  function handleQuestionChange<T extends keyof QuestionDataType>(
+  function handleQuestionChange<T extends keyof QuestionType>(
     index: number,
     field: T,
-    value: QuestionDataType[T],
+    value: QuestionType[T],
   ) {
     const updatedQuestions = questions.map((q, i) =>
       i === index ? { ...q, [field]: value } : q,
@@ -73,7 +66,9 @@ export default function ExamForm({
     !questions.length ||
     questions.some(
       (question) =>
-        !question.text || question.options.some((option) => !option.trim()),
+        !question.text ||
+        !question.answer ||
+        question.options.some((option) => !option.trim()),
     );
 
   async function handleSubmit(e: React.FormEvent) {
@@ -168,10 +163,10 @@ export default function ExamForm({
             <div className="flex items-center gap-2" key={optIndex}>
               <input
                 type="radio"
-                name={`option-${optIndex}`}
-                id={`option-${optIndex}`}
-                checked={q.answer === optIndex}
-                onChange={() => handleQuestionChange(index, "answer", optIndex)}
+                name={`option-${q._id}-${optIndex}`}
+                id={`option-${q._id}-${optIndex}`}
+                checked={q.answer ? q.answer === option : false}
+                onChange={() => handleQuestionChange(index, "answer", option)}
                 className="accent-blue-600"
               />
               <Input

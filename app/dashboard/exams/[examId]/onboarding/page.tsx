@@ -1,5 +1,5 @@
 import { getExamById } from "@/services/examServices";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { startOfDay, isAfter, isBefore } from "date-fns";
 import Link from "next/link";
 import { getSession } from "@/services/authServices";
@@ -15,22 +15,62 @@ export default async function ExamOnboardingPage({
   const { examId } = await params;
   const { data: exam } = await getExamById(examId);
 
-  if (!exam) notFound();
+  if (!exam) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center bg-red-50">
+        <div className="flex aspect-video w-[90%] max-w-md flex-col items-center justify-center rounded-lg bg-white p-4 text-center shadow-lg sm:p-6">
+          <h1 className="mb-4 text-2xl font-bold">Exam Not Found</h1>
+          <p className="text-gray-600">
+            The exam you are looking for does not exist or has been removed.
+          </p>
+          <Link
+            href="/dashboard"
+            className="mt-4 rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const student = exam.students.find(
     (student) => student.user._id === user._id,
   );
-  if (!student) redirect("/dashboard");
+  if (!student) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center bg-red-50">
+        <div className="flex aspect-video w-[90%] max-w-md flex-col items-center justify-center rounded-lg bg-white p-4 text-center shadow-lg sm:p-6">
+          <h1 className="mb-4 text-2xl font-bold">Access Denied</h1>
+          <p className="text-gray-600">
+            You are not enrolled in this exam. Please contact your instructor
+            for more information.
+          </p>
+          <Link
+            href="/dashboard"
+            className="mt-4 rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   let examStatus = "";
 
   const examDate = startOfDay(new Date(exam.date));
   const today = startOfDay(new Date());
 
-  if (isAfter(examDate, today)) {
+  console.log({
+    examDate: examDate.toDateString(),
+    today: today.toDateString(),
+  });
+
+  if (isBefore(examDate, today)) {
     examStatus = "This exam has already passed.";
-  } else if (isBefore(examDate, today)) {
-    examStatus = "The time for this exam is not yet due.";
+  } else if (isAfter(examDate, today)) {
+    examStatus = "This exam is not yet due.";
   } else {
     examStatus = "ready";
   }

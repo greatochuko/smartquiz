@@ -29,7 +29,9 @@ export default function StudentExamCard({
       ? "text-green-500"
       : status === "requested"
         ? "text-amber-500"
-        : "text-rose-500";
+        : status === "unregistered"
+          ? "text-zinc-500"
+          : "text-rose-500";
 
   return (
     <div className="rounded-lg bg-white p-4 shadow-md">
