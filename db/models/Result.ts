@@ -5,8 +5,10 @@ import { ExamType, StudentAnswerType } from "./Exam";
 export type ResultType = {
   _id: string;
   student: UserType;
+  examiner: UserType;
   exam: ExamType;
   score: number;
+  totalQuestions: number;
   answers: StudentAnswerType[];
   createdAt: string;
   updatedAt: string;
@@ -24,7 +26,13 @@ const ResultSchema = new mongoose.Schema<ResultType>(
       required: true,
       ref: "User",
     },
+    examiner: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true,
+      ref: "User",
+    },
     score: { type: Number },
+    totalQuestions: { type: Number },
     answers: {
       type: [{ questionId: { type: String }, answer: { type: String } }],
       default: [],

@@ -264,10 +264,12 @@ export async function submitExam(examId: string, studentUserId: string) {
       studentInExam.status = "submitted";
 
       const newResult = await Result.create({
-        exam: examId,
+        exam: exam._id,
         student: studentUserId,
         score: studentInExam.score,
         answers: studentInExam.answers,
+        examiner: exam.examiner,
+        totalQuestions: exam.questions.length,
       });
 
       studentInExam.result = newResult._id;

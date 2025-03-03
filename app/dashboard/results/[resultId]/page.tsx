@@ -1,3 +1,5 @@
+import BackButton from "@/components/BackButton";
+import { getGrade } from "@/lib/utils";
 import { getResultById } from "@/services/resultServices";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -12,37 +14,58 @@ export default async function StudentResultPage({
   const { result } = await getResultById(resultId);
   if (!result) notFound();
 
-  const totalQuestions = result.exam.questions.length;
+  const totalQuestions = result.totalQuestions;
+  const scorePercentage = Math.floor((result.score / totalQuestions) * 100);
 
-  const passMark = Math.ceil(totalQuestions / 2);
+  const examIsPassed = scorePercentage >= 50;
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <div className="flex w-full max-w-2xl flex-col gap-6 rounded-lg bg-white p-6 text-center shadow-lg">
-        <h1 className="text-2xl font-bold">
-          {result.exam.name || "Exam Results"}
-        </h1>
-        <p className="text-gray-600">
-          Exam Date: {new Date(result.exam.date).toDateString()}
-        </p>
-
-        <div className="rounded-lg bg-gray-200 p-4">
-          <p className="text-xl font-semibold">
-            Score: {result.score} / {totalQuestions}
+    <div className="flex flex-1 flex-col items-center justify-center p-4">
+      <div className="flex w-full max-w-2xl flex-col gap-6 rounded-lg bg-white p-4 text-center shadow-lg sm:p-6">
+        <div className="flex-col gap-2 font-medium">
+          <h1 className="text-lg sm:text-xl">
+            Exam Results for {result.student.firstName}{" "}
+            {result.student.lastName}
+          </h1>
+          <p>
+            <span className="font-normal text-gray-600">Exam:</span>{" "}
+            {result.exam.name}
           </p>
-          <p
-            className={`text-lg font-semibold ${result.score >= passMark ? "text-green-600" : "text-red-600"}`}
-          >
-            {result.score >= passMark ? "Passed" : "Failed"}
+          <p>
+            <span className="font-normal text-gray-600">Exam Date:</span>{" "}
+            {new Date(result.exam.date).toDateString()}
           </p>
         </div>
 
-        <Link
-          href="/dashboard"
-          className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+        <div
+          className={`rounded-lg p-4 text-lg font-medium ${examIsPassed ? "bg-green-100" : "bg-red-100"}`}
         >
-          Back to Dashboard
-        </Link>
+          <p>
+            <span className="font-normal text-gray-600">Score:</span>{" "}
+            {result.score} / {totalQuestions}
+          </p>
+          <p>
+            <span className="font-normal text-gray-600">Percentage:</span>{" "}
+            {scorePercentage}%
+          </p>
+          <p className={` ${examIsPassed ? "text-green-600" : "text-red-600"}`}>
+            {examIsPassed ? "Passed" : "Failed"}
+          </p>
+          <p>
+            <span className="font-normal text-gray-600">Grade:</span>{" "}
+            {getGrade(scorePercentage)}
+          </p>
+        </div>
+
+        <div className="flex justify-between gap-4">
+          <BackButton />
+          <Link
+            href="/dashboard"
+            className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+          >
+            Back to Dashboard
+          </Link>
+        </div>
       </div>
     </div>
   );

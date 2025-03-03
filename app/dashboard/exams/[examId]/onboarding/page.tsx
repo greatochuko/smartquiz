@@ -1,8 +1,8 @@
 import { getExamById } from "@/services/examServices";
 import { redirect } from "next/navigation";
-import { startOfDay, isAfter, isBefore } from "date-fns";
 import Link from "next/link";
 import { getSession } from "@/services/authServices";
+import { getExamStatus } from "@/lib/utils";
 
 export default async function ExamOnboardingPage({
   params,
@@ -57,18 +57,7 @@ export default async function ExamOnboardingPage({
     );
   }
 
-  let examStatus = "";
-
-  const examDate = startOfDay(new Date(exam.date));
-  const today = startOfDay(new Date());
-
-  if (isBefore(examDate, today)) {
-    examStatus = "This exam has already passed.";
-  } else if (isAfter(examDate, today)) {
-    examStatus = "This exam is not yet due.";
-  } else {
-    examStatus = "ready";
-  }
+  const examStatus = getExamStatus(exam);
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center bg-blue-50">
@@ -100,7 +89,11 @@ export default async function ExamOnboardingPage({
             Start Exam
           </Link>
         ) : (
-          <p className="mt-4 text-red-500">{examStatus}</p>
+          <p className="mt-4 text-red-500">
+            {examStatus === "not-due"
+              ? "This exam is not yet due."
+              : "This exam has already passed."}
+          </p>
         )}
       </div>
     </div>

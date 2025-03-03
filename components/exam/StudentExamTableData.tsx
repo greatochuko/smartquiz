@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { ExamType, StudentType } from "@/db/models/Exam";
 import LoadingIndicator from "../LoadingIndicator";
 import Link from "next/link";
+import { getExamStatus } from "@/lib/utils";
 
 export type StudentExamTableDataProps = {
   exam: ExamType;
@@ -21,6 +22,8 @@ export default function StudentExamTableData({
   loading,
   studentInExam,
 }: StudentExamTableDataProps) {
+  const examStatus = getExamStatus(exam);
+
   const registered = studentInExam?.status === "registered";
 
   const submitted = studentInExam?.status === "submitted";
@@ -59,14 +62,23 @@ export default function StudentExamTableData({
           </Link>
         )}
 
-        {registered && !submitted && (
-          <Link
-            href={`/dashboard/exams/${exam._id}/onboarding`}
-            className="h-fit rounded-md p-2 text-sm font-medium text-green-600 duration-200 hover:bg-green-50 hover:text-green-700 disabled:cursor-not-allowed"
-          >
-            Take Exam
-          </Link>
-        )}
+        {registered &&
+          !submitted &&
+          (examStatus === "ready" ? (
+            <Link
+              href={`/dashboard/exams/${exam._id}/onboarding`}
+              className="h-fit rounded-md p-2 text-sm font-medium text-green-600 duration-200 hover:bg-green-50 hover:text-green-700 disabled:cursor-not-allowed"
+            >
+              Take Exam
+            </Link>
+          ) : (
+            <button
+              disabled
+              className="h-fit cursor-not-allowed rounded-md p-2 text-sm font-medium text-green-600/50"
+            >
+              Take Exam
+            </button>
+          ))}
 
         {!registered && !submitted && (
           <Button
@@ -78,7 +90,7 @@ export default function StudentExamTableData({
             }`}
             size={"sm"}
             onClick={studentInExam ? handleCancelRegistration : handleRegister}
-            disabled={loading || registered}
+            disabled={examStatus !== "ready" || loading || registered}
           >
             {loading ? (
               <LoadingIndicator />

@@ -16,7 +16,7 @@ export default function Header({ user }: { user?: UserType | null }) {
   if (pathname.startsWith("/dashboard"))
     return (
       <header className="flex items-center gap-4 bg-white px-[5%] py-4 shadow-sm">
-        <Link href={"/dashboard"} className="text-2xl font-semibold">
+        <Link href={"/dashboard"} className="text-xl font-semibold sm:text-2xl">
           Dashboard
         </Link>
         <p className="ml-auto">Hello, {user?.firstName}</p>
