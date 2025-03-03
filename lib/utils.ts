@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { SignJWT, jwtVerify, JWTPayload } from "jose";
 import { startOfDay, isAfter, isBefore } from "date-fns";
 import { ExamType } from "@/db/models/Exam";
+import { ActivityType } from "@/db/models/Activity";
 
 export async function signJWT(payload: JWTPayload, expiresIn: string = "1d") {
   try {
@@ -50,7 +51,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function parseJSON<T>(data: T): T {
+export function parseJSONResponse<T>(data: T): T {
   return JSON.parse(JSON.stringify(data));
 }
 
@@ -87,4 +88,30 @@ export function getGrade(percentage: number) {
   } else {
     return "F";
   }
+}
+
+export function generateActivityMessage(activity: ActivityType) {
+  let message: string;
+
+  switch (activity.action) {
+    case "create-exam":
+      message = `Added new exam: ${activity.exam.name}`;
+      break;
+    case "delete-exam":
+      message = `Deleted an exam`;
+      break;
+    case "update-exam":
+      message = `Updated exam: ${activity.exam.name}`;
+      break;
+    case "register-student":
+      message = `Register student: ${activity.student.firstName} ${activity.student.lastName} for ${activity.exam.name}`;
+      break;
+    case "remove-student":
+      message = `Removed student: ${activity.student.firstName} ${activity.student.lastName} from ${activity.exam.name}`;
+      break;
+    default:
+      message = "Unknown activity.";
+  }
+
+  return message;
 }

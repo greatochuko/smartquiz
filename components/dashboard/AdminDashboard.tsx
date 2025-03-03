@@ -1,15 +1,13 @@
+import { generateActivityMessage } from "@/lib/utils";
+import { getActivitiesByUser } from "@/services/activityServices";
 import { getExamsByExaminer } from "@/services/examServices";
+import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import React from "react";
 
-const recentActions = [
-  { action: "Added new exam: Mathematics Final", time: "2 hours ago" },
-  { action: "Updated questions for Physics Midterm", time: "Yesterday" },
-  { action: "Removed student: John Doe", time: "3 days ago" },
-];
-
 export default async function AdminDashboard({ userId }: { userId: string }) {
   const { data: exams } = await getExamsByExaminer(userId);
+  const { activities } = await getActivitiesByUser(userId);
 
   const allStudents = exams.flatMap((exam) =>
     exam.students.map((student) => student.user._id),
@@ -57,14 +55,24 @@ export default async function AdminDashboard({ userId }: { userId: string }) {
 
       {/* Recent Actions */}
       <section className="mt-8">
-        <h2 className="mb-4 text-xl font-semibold">Recent Actions</h2>
+        <h2 className="mb-4 text-xl font-semibold">Recent Activities</h2>
         <div className="space-y-4 rounded-lg bg-white p-6 shadow-md">
-          {recentActions.map((action, index) => (
-            <div key={index} className="border-b pb-2">
-              <p className="font-medium">{action.action}</p>
-              <p className="text-sm text-gray-500">{action.time}</p>
-            </div>
-          ))}
+          {activities.length > 0 ? (
+            activities.map((activity, index) => (
+              <div key={index} className="border-b pb-2">
+                <p className="font-medium">
+                  {generateActivityMessage(activity)}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {formatDistanceToNow(activity.createdAt, { addSuffix: true })}
+                </p>
+              </div>
+            ))
+          ) : (
+            <p className="text-zinc-600">
+              You haven&apos;t done any activities.
+            </p>
+          )}
         </div>
       </section>
     </div>

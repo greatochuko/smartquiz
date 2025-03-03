@@ -3,8 +3,10 @@
 import connectDB from "@/db/connectDB";
 import Exam, { ExamType, StudentAnswerType } from "@/db/models/Exam";
 import Result, { ResultType } from "@/db/models/Result";
+import { parseJSONResponse } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createActivity } from "./activityActions";
 
 type ExamDataType = {
   name: string;
@@ -21,7 +23,13 @@ export async function createExam(userId: string, examData: ExamDataType) {
   let canRedirect = false;
   try {
     await connectDB();
-    await Exam.create({ ...examData, examiner: userId });
+    const newExam: ExamType = await Exam.create({
+      ...examData,
+      examiner: userId,
+    });
+
+    await createActivity("create-exam", newExam._id);
+
     canRedirect = true;
   } catch (err) {
     const error = err as Error;
@@ -41,6 +49,9 @@ export async function updateExam(examId: string, examData: ExamDataType) {
       examData,
     );
     if (!updatedExam) throw new Error("Unable to update exam");
+
+    await createActivity("update-exam", updatedExam._id);
+
     canRedirect = true;
   } catch (err) {
     const error = err as Error;
@@ -54,8 +65,10 @@ export async function updateExam(examId: string, examData: ExamDataType) {
 export async function deleteExam(examId: string) {
   try {
     await connectDB();
-    const updatedExam: ExamType | null = await Exam.findByIdAndDelete(examId);
-    if (!updatedExam) throw new Error("Unable to update exam");
+    await Exam.findByIdAndDelete(examId);
+
+    await createActivity("delete-exam", examId);
+
     return { error: null };
   } catch (err) {
     const error = err as Error;
@@ -75,15 +88,11 @@ export async function registerForExam(examId: string, userId: string) {
     );
     if (!examToUpdated) throw new Error("Unable to register for exam");
 
-    const updatedExam: ExamType | null = JSON.parse(
-      JSON.stringify(
-        await Exam.findById(examId).populate({
-          path: "students.user",
-          select: "firstName lastName",
-        }),
-      ),
-    );
-    return { updatedExam, error: null };
+    const updatedExam: ExamType | null = await Exam.findById(examId).populate({
+      path: "students.user",
+      select: "firstName lastName",
+    });
+    return { updatedExam: parseJSONResponse(updatedExam), error: null };
   } catch (err) {
     const error = err as Error;
     console.log("Error requesting registration: ", error.message);
@@ -109,16 +118,15 @@ export async function cancelExamRegistration(
     if (!examToUpdate)
       throw new Error("Unable to cancel registeration for exam");
 
-    const updatedExam: ExamType | null = JSON.parse(
-      JSON.stringify(
-        await Exam.findById(examId).populate({
-          path: "students.user",
-          select: "firstName lastName",
-        }),
-      ),
-    );
+    const updatedExam: ExamType | null = await Exam.findById(examId).populate({
+      path: "students.user",
+      select: "firstName lastName",
+    });
+
+    await createActivity("remove-student", examToUpdate._id, studentUserId);
+
     revalidatePath("/", "layout");
-    return { updatedExam, error: null };
+    return { updatedExam: parseJSONResponse(updatedExam), error: null };
   } catch (err) {
     const error = err as Error;
     console.log("Error requesting registration: ", error.message);
@@ -142,6 +150,8 @@ export async function acceptRegistrationRequest(
     );
 
     if (!updatedExam) throw new Error("Unable to accept registration for exam");
+
+    await createActivity("register-student", updatedExam._id, studentUserId);
 
     revalidatePath("/", "layout");
     return { error: null };
@@ -233,7 +243,7 @@ export async function updateStudentAnswers(
       { new: true },
     );
     if (!updatedExam) throw new Error("Unable to update student answers");
-    return { error: null, data: JSON.parse(JSON.stringify(updatedExam)) };
+    return { error: null, data: parseJSONResponse(updatedExam) };
   } catch (err) {
     const error = err as Error;
     console.log("Error updating student answers: ", error.message);
