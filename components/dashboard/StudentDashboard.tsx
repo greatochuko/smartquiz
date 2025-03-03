@@ -3,32 +3,52 @@ import React from "react";
 import { getExams } from "@/services/examServices";
 import StudentExamsTable from "../exam/StudentExamsTable";
 import { UserType } from "@/db/models/User";
-
-const stats = [
-  {
-    title: "Total Exams",
-    value: 12,
-    className: "text-blue-600",
-  },
-  {
-    title: "Upcoming Exams",
-    value: 4,
-    className: "text-amber-600",
-  },
-  {
-    title: "Completed Exams",
-    value: 7,
-    className: "text-green-600",
-  },
-  {
-    title: "Missed Exams",
-    value: 1,
-    className: "text-rose-600",
-  },
-];
+import { getExamStatus } from "@/lib/utils";
 
 export default async function StudentDashboard({ user }: { user: UserType }) {
   const { data: exams } = await getExams();
+
+  const totalExams = exams.filter((exam) =>
+    exam.students.some((student) => student.user._id === user._id),
+  ).length;
+
+  const upcomingExams = exams.filter(
+    (exam) =>
+      exam.students.some((student) => student.user._id === user._id) &&
+      getExamStatus(exam) === "not-due",
+  ).length;
+
+  const completedExams = exams.filter((exam) => {
+    const studentInExam = exam.students.find(
+      (student) => student.user._id === user._id,
+    );
+    return studentInExam && studentInExam.status === "submitted";
+  }).length;
+
+  const missedExams = totalExams - upcomingExams - completedExams;
+
+  const stats = [
+    {
+      title: "Total Exams",
+      value: totalExams,
+      className: "text-blue-600",
+    },
+    {
+      title: "Upcoming Exams",
+      value: upcomingExams,
+      className: "text-amber-600",
+    },
+    {
+      title: "Completed Exams",
+      value: completedExams,
+      className: "text-green-600",
+    },
+    {
+      title: "Missed Exams",
+      value: missedExams,
+      className: "text-rose-600",
+    },
+  ];
 
   return (
     <div className="flex-1 px-[5%] py-6 text-gray-900">
