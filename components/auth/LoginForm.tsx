@@ -35,7 +35,7 @@ export default function LoginForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
-          className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div className="mt-4">
@@ -45,12 +45,12 @@ export default function LoginForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter your password"
-          className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <Error message={loginError} />
 
-      <div className="flex justify-between items-center mt-4">
+      <div className="mt-4 flex items-center justify-between">
         <Link href="#" className="text-sm text-blue-600 hover:underline">
           Forgot Password?
         </Link>
@@ -58,7 +58,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={cannotSubmit}
-        className="w-full mt-4 bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed text-white py-2 rounded-md hover:bg-blue-700 transition focus-visible:ring-2 ring-blue-400 ring-offset-2"
+        className="mt-4 flex w-full items-center justify-center rounded-md bg-blue-600 py-2 text-white ring-blue-400 ring-offset-2 transition hover:bg-blue-700 focus-visible:ring-2 disabled:cursor-not-allowed disabled:bg-blue-300"
       >
         {loading ? <LoadingIndicator color="#fff" /> : "Login"}
       </button>

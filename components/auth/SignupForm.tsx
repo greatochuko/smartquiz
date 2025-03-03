@@ -183,7 +183,7 @@ export default function SignupForm() {
       <button
         disabled={cannotSubmit}
         type="submit"
-        className="mt-4 w-full rounded-md bg-blue-600 py-2 text-white ring-blue-400 ring-offset-2 transition hover:bg-blue-700 focus-visible:ring-2 disabled:cursor-not-allowed disabled:bg-blue-300"
+        className="mt-4 flex w-full items-center justify-center rounded-md bg-blue-600 py-2 text-white ring-blue-400 ring-offset-2 transition hover:bg-blue-700 focus-visible:ring-2 disabled:cursor-not-allowed disabled:bg-blue-300"
       >
         {loading ? <LoadingIndicator color="#fff" /> : "Sign Up"}
       </button>
