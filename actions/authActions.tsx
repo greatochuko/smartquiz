@@ -38,8 +38,6 @@ export async function signup(userData: Partial<UserType>) {
 export async function login(email: string, password: string) {
   let canRedirect = false;
   try {
-    console.log("Inside login");
-
     await connectDB();
     const user = await User.findOne({ email: email });
     if (!user)
@@ -48,31 +46,21 @@ export async function login(email: string, password: string) {
         error: "Invalid username and password combination",
       };
 
-    console.log("User found");
-
     const passwordIsCorrect = await bcrypt.compare(password, user.password);
 
     if (!passwordIsCorrect)
       return { data: null, error: "Invalid username and password combination" };
 
-    console.log("Password correct");
-
     const token = await signJWT({ userId: user._id });
     if (!token) throw new Error("Error signing token");
-
-    console.log("Token signed");
 
     const cookieStore = await cookies();
     cookieStore.set("token", token);
     canRedirect = true;
-
-    console.log("Cookie set");
   } catch (err) {
-    console.log("Error encountered");
-
     const error = err as Error;
-    console.log("Error creating  new user:", error.message);
-    return { data: null, error: "An error occured creating new user" };
+    console.log("Error logging in:", error.message);
+    return { data: null, error: "An error occured during login" };
   } finally {
     if (canRedirect) redirect("/dashboard");
   }
