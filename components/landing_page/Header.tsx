@@ -48,7 +48,7 @@ export default function Header({ user }: { user?: UserType | null }) {
             {user ? (
               <li>
                 <Link
-                  href="/login"
+                  href="/dashboard"
                   className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                 >
                   Dashboard
