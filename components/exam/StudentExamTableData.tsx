@@ -27,8 +27,6 @@ export default function StudentExamTableData({
 
   const status = studentInExam?.status || "unregistered";
 
-  console.log({ status });
-
   const statusColor =
     status === "registered"
       ? "bg-green-500"
@@ -54,7 +52,7 @@ export default function StudentExamTableData({
       <td className={`w-1/5 p-2`}>
         {submitted && (
           <Link
-            href={`/dashboard/result`}
+            href={`/dashboard/results/${String(studentInExam.result)}`}
             className="h-fit rounded-md p-2 text-sm font-medium text-purple-600 duration-200 hover:bg-purple-50 hover:text-purple-700 disabled:cursor-not-allowed"
           >
             View Result

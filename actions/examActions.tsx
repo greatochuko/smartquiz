@@ -263,16 +263,15 @@ export async function submitExam(examId: string, studentUserId: string) {
 
       studentInExam.status = "submitted";
 
-      await exam.save();
-
-      const newResult: ResultType | null = await Result.create({
+      const newResult = await Result.create({
         exam: examId,
         student: studentUserId,
         score: studentInExam.score,
         answers: studentInExam.answers,
       });
 
-      if (!newResult) throw new Error("Unable to submit exam");
+      studentInExam.result = newResult._id;
+      await exam.save();
 
       redirectUrl = `/dashboard/results/${newResult._id}`;
     }

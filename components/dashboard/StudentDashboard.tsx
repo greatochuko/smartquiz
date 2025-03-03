@@ -2,8 +2,7 @@ import Link from "next/link";
 import React from "react";
 import { getExams } from "@/services/examServices";
 import StudentExamsTable from "../exam/StudentExamsTable";
-import { getSession } from "@/services/authServices";
-import { redirect } from "next/navigation";
+import { UserType } from "@/db/models/User";
 
 const stats = [
   {
@@ -28,10 +27,7 @@ const stats = [
   },
 ];
 
-export default async function StudentDashboard() {
-  const user = await getSession();
-  if (!user) redirect("/login");
-
+export default async function StudentDashboard({ user }: { user: UserType }) {
   const { data: exams } = await getExams();
 
   return (

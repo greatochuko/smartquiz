@@ -4,11 +4,13 @@ export async function getExams() {
   try {
     const exams: ExamType[] = JSON.parse(
       JSON.stringify(
-        await Exam.find().populate({
-          path: "students.user",
-          select: "firstName lastName",
-        })
-      )
+        await Exam.find()
+          .populate({
+            path: "students.user",
+            select: "firstName lastName",
+          })
+          .sort({ createdAt: -1 }),
+      ),
     );
     return { data: exams, error: null };
   } catch (err) {
@@ -22,11 +24,13 @@ export async function getExamsByExaminer(userId: string) {
   try {
     const exams: ExamType[] = JSON.parse(
       JSON.stringify(
-        await Exam.find({ examiner: userId }).populate({
-          path: "students.user",
-          select: "firstName lastName",
-        })
-      )
+        await Exam.find({ examiner: userId })
+          .populate({
+            path: "students.user",
+            select: "firstName lastName",
+          })
+          .sort({ createdAt: -1 }),
+      ),
     );
     return { data: exams, error: null };
   } catch (err) {
@@ -43,8 +47,8 @@ export async function getExamById(examId: string) {
         await Exam.findById(examId).populate({
           path: "students.user",
           select: "firstName lastName",
-        })
-      )
+        }),
+      ),
     );
     return { data: exam, error: null };
   } catch (err) {

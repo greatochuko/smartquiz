@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { UserType } from "./User";
+import { ResultType } from "./Result";
 
 export type QuestionType = {
   _id: string;
@@ -26,6 +27,7 @@ export type StudentType = {
     | "rejected"
     | "submitted";
   examStartTime?: Date;
+  result: ResultType;
   answers: StudentAnswerType[];
   score: number;
 };
@@ -55,6 +57,11 @@ const ExamSchema = new mongoose.Schema<ExamType>(
             type: mongoose.SchemaTypes.ObjectId,
             required: true,
             ref: "User",
+          },
+          result: {
+            type: mongoose.SchemaTypes.ObjectId,
+            required: true,
+            ref: "Result",
           },
           status: {
             type: String,
