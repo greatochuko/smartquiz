@@ -1,10 +1,6 @@
+import { getExamsByExaminer } from "@/services/examServices";
 import Link from "next/link";
 import React from "react";
-
-const stats = [
-  { title: "Total Exams", value: 25 },
-  { title: "Total Students", value: 10 },
-];
 
 const recentActions = [
   { action: "Added new exam: Mathematics Final", time: "2 hours ago" },
@@ -12,7 +8,19 @@ const recentActions = [
   { action: "Removed student: John Doe", time: "3 days ago" },
 ];
 
-export default function AdminDashboard() {
+export default async function AdminDashboard({ userId }: { userId: string }) {
+  const { data: exams } = await getExamsByExaminer(userId);
+
+  const allStudents = exams.flatMap((exam) =>
+    exam.students.map((student) => student.user._id),
+  );
+  const uniqueStudents = Array.from(new Set(allStudents));
+
+  const stats = [
+    { title: "Total Exams", value: exams.length },
+    { title: "Total Students", value: uniqueStudents.length },
+  ];
+
   return (
     <div className="flex-1 px-[5%] py-6 text-gray-900">
       <section className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:gap-6">

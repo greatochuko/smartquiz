@@ -7,7 +7,7 @@ export default async function DashboardPage() {
   const user = await getSession();
   if (!user) redirect("/login");
 
-  if (user.role === "Examiner") return <AdminDashboard />;
+  if (user.role === "Examiner") return <AdminDashboard userId={user._id} />;
 
   return <StudentDashboard user={user} />;
 }
