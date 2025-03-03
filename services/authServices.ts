@@ -11,7 +11,7 @@ export async function getSession(): Promise<UserType | null> {
     const BASE_URL = process.env.BASE_URL;
 
     const res = await fetch(`${BASE_URL}/api/session`, {
-      headers: { Authorization: `Bearer ${token || undefined}` },
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     const { user, error } = await res.json();
     if (error) throw new Error(error);
