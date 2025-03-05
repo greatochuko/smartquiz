@@ -4,6 +4,8 @@ import { Button } from "../ui/button";
 import { format } from "date-fns";
 import { ExamType, StudentType } from "@/db/models/Exam";
 import Link from "next/link";
+import { getExamStatus } from "@/lib/utils";
+import LoadingIndicator from "../LoadingIndicator";
 
 export type StudentExamCardProps = {
   exam: ExamType;
@@ -20,7 +22,10 @@ export default function StudentExamCard({
   handleCancelRegistration,
   loading,
 }: StudentExamCardProps) {
+  const examStatus = getExamStatus(exam);
+
   const registered = studentInExam?.status === "registered";
+  const submitted = studentInExam?.status === "submitted";
 
   const status = studentInExam?.status || "unregistered";
 
@@ -42,32 +47,52 @@ export default function StudentExamCard({
       <p className={`mb-1 text-sm capitalize text-gray-600 ${statusColor}`}>
         {status}
       </p>
-      {registered ? (
+      {submitted && (
         <Link
-          href={`/dashboard/exams/${exam._id}/onboarding`}
-          className="h-fit rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white duration-200 hover:bg-green-600/90 disabled:cursor-not-allowed"
+          href={`/dashboard/results/${String(studentInExam.result)}`}
+          className="inline-block h-fit rounded-md bg-purple-600 px-3 py-1.5 text-sm font-medium text-white duration-200 hover:bg-purple-50 hover:bg-purple-600/90 disabled:cursor-not-allowed"
         >
-          Take Exam
+          View Result
         </Link>
-      ) : (
+      )}
+
+      {registered &&
+        !submitted &&
+        (examStatus === "ready" ? (
+          <Link
+            href={`/dashboard/exams/${exam._id}/onboarding`}
+            className="inline-block h-fit rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white duration-200 hover:bg-green-600/90 disabled:cursor-not-allowed"
+          >
+            Take Exam
+          </Link>
+        ) : (
+          <button
+            disabled
+            className="inline-block h-fit rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white duration-200 hover:bg-green-600/90 disabled:cursor-not-allowed"
+          >
+            Take Exam
+          </button>
+        ))}
+
+      {!registered && !submitted && (
         <Button
-          variant={"default"}
-          className={`h-fit px-3 py-1.5 duration-200 disabled:cursor-not-allowed ${
+          variant={"ghost"}
+          className={`h-fit p-2 text-white duration-200 disabled:cursor-not-allowed ${
             studentInExam
               ? "bg-rose-600 hover:bg-rose-600/90"
               : "bg-blue-600 hover:bg-blue-600/90"
           }`}
           size={"sm"}
           onClick={studentInExam ? handleCancelRegistration : handleRegister}
-          disabled={loading || registered}
+          disabled={examStatus !== "ready" || loading || registered}
         >
-          {studentInExam
-            ? loading
-              ? "Canceling..."
-              : "Cancel Registration"
-            : loading
-              ? "Registering..."
-              : "Register"}
+          {loading ? (
+            <LoadingIndicator />
+          ) : studentInExam ? (
+            "Cancel Registration"
+          ) : (
+            "Register"
+          )}
         </Button>
       )}
     </div>

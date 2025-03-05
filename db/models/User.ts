@@ -6,6 +6,7 @@ export type UserType = {
   lastName: string;
   email: string;
   password: string;
+  matNumber?: string;
   role: "Examiner" | "Student";
   createdAt: string;
   updatedAt: string;
@@ -17,6 +18,7 @@ const UserSchema = new mongoose.Schema<UserType>(
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    matNumber: { type: String },
     role: {
       type: String,
       required: true,
@@ -24,7 +26,7 @@ const UserSchema = new mongoose.Schema<UserType>(
       enum: ["Examiner", "Student"],
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = mongoose.models?.User || mongoose.model("User", UserSchema);

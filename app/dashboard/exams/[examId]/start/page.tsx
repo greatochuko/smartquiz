@@ -4,6 +4,7 @@ import { startOfDay, isAfter, isBefore, differenceInSeconds } from "date-fns";
 import { getSession } from "@/services/authServices";
 import QuizScreen from "@/components/exam/QuizScreen";
 import { getResult } from "@/services/resultServices";
+import { ExamType } from "@/db/models/Exam";
 
 export default async function ExamStartPage({
   params,
@@ -40,13 +41,24 @@ export default async function ExamStartPage({
 
   const userTimeLeft = Math.max(differenceInSeconds(endTime, now), 0);
 
+  const scrabbledQuestions = exam.questions
+    .map((question) => ({
+      ...question,
+      options: question.options.sort(() => Math.random() - 0.5),
+    }))
+    .sort(() => Math.random() - 0.5);
+
+  const scrabbledExam = { ...exam } as ExamType;
+  scrabbledExam.questions = scrabbledQuestions;
+
   return (
     <QuizScreen
-      exam={exam}
+      exam={scrabbledExam}
       studentTimeLeft={userTimeLeft}
       studentExamStartTime={student.examStartTime}
       studentUserId={student.user._id}
       studentExamAnswers={student.answers}
+      studentSwitchTabCount={student.switchTabCount}
     />
   );
 }

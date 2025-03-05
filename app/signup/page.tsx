@@ -4,10 +4,10 @@ import Link from "next/link";
 export default function SignupPage() {
   return (
     <div
-      className="relative flex min-h-screen items-center justify-center bg-cover bg-center"
+      className="relative flex h-screen items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('/hero-background.jpg')" }}
     >
-      <div className="mx-auto w-[90%] max-w-md rounded-lg bg-white p-4 shadow-lg sm:py-6">
+      <div className="custom-scrollbar mx-auto max-h-[90%] w-[90%] max-w-md overflow-y-auto rounded-lg bg-white p-4 shadow-lg sm:py-6">
         <Link
           href={"/"}
           className="mx-auto block w-fit text-center text-lg font-semibold text-blue-600 hover:underline"

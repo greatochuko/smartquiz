@@ -30,6 +30,8 @@ export type StudentType = {
   result: ResultType;
   answers: StudentAnswerType[];
   score: number;
+  switchTabCount: number;
+  matNumber: string;
 };
 
 export type ExamType = {
@@ -80,6 +82,7 @@ const ExamSchema = new mongoose.Schema<ExamType>(
             default: [],
           },
           score: { type: Number, default: 0 },
+          switchTabCount: { type: Number, default: 0 },
         },
       ],
       default: [],

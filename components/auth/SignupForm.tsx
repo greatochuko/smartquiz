@@ -33,6 +33,7 @@ function reducer(state: typeof initialState, action: ActionType) {
 export default function SignupForm() {
   const [signupError, setSignupError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [matNumber, setMatNumber] = useState("");
 
   const [formEntries, dispatch] = useReducer(reducer, initialState);
 
@@ -48,6 +49,7 @@ export default function SignupForm() {
 
   const cannotSubmit =
     Object.values(formEntries).some((field) => !field.trim()) ||
+    (formEntries.role === "Student" && !matNumber) ||
     !!passwordError ||
     !!confirmPasswordError ||
     loading;
@@ -60,6 +62,7 @@ export default function SignupForm() {
     setLoading(true);
     const response = await signup({
       ...formEntries,
+      matNumber,
       role: formEntries.role as "Examiner" | "Student",
     });
     if (response?.error) {
@@ -69,12 +72,13 @@ export default function SignupForm() {
   }
 
   return (
-    <form className="mt-6 text-sm" onSubmit={handleSignup}>
+    <form className="mt-6 flex flex-col gap-3 text-sm" onSubmit={handleSignup}>
       <div className="flex gap-4">
         <div>
           <label className="block text-gray-700">First Name</label>
           <input
             type="text"
+            required
             placeholder="John"
             name="firstName"
             value={formEntries.firstName}
@@ -92,6 +96,7 @@ export default function SignupForm() {
           <label className="block text-gray-700">Last Name</label>
           <input
             type="text"
+            required
             placeholder="Doe"
             name="lastName"
             value={formEntries.lastName}
@@ -106,7 +111,7 @@ export default function SignupForm() {
           />
         </div>
       </div>
-      <div className="mt-4">
+      <div>
         <label className="block text-gray-700">Email</label>
         <input
           type="email"
@@ -123,11 +128,12 @@ export default function SignupForm() {
           className="mt-1 w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="mt-4">
+      <div>
         <label className="block text-gray-700">Password</label>
         <input
           type="password"
           name="password"
+          required
           value={formEntries.password}
           onChange={(e) =>
             dispatch({
@@ -141,11 +147,12 @@ export default function SignupForm() {
         />
         <Error message={passwordError} />
       </div>
-      <div className="mt-4">
+      <div>
         <label className="block text-gray-700">Confirm Password</label>
         <input
           type="password"
           name="confirm-password"
+          required
           value={formEntries.confirmPassword}
           onChange={(e) =>
             dispatch({
@@ -159,11 +166,12 @@ export default function SignupForm() {
         />
         <Error message={confirmPasswordError} />
       </div>
-      <div className="mt-4">
+      <div>
         <label className="block text-gray-700">Role</label>
         <select
           name="role"
           id="role"
+          required
           value={formEntries.role}
           onChange={(e) =>
             dispatch({
@@ -179,6 +187,20 @@ export default function SignupForm() {
           <option value="Examiner">Examiner</option>
         </select>
       </div>
+      {formEntries.role === "Student" && (
+        <div>
+          <label className="block text-gray-700">Mat Number</label>
+          <input
+            type="text"
+            required
+            name="matNumber"
+            value={matNumber}
+            onChange={(e) => setMatNumber(e.target.value)}
+            placeholder="Enter your mat number"
+            className="mt-1 w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      )}
       <Error message={signupError} />
       <button
         disabled={cannotSubmit}

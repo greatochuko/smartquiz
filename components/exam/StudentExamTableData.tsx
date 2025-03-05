@@ -25,7 +25,6 @@ export default function StudentExamTableData({
   const examStatus = getExamStatus(exam);
 
   const registered = studentInExam?.status === "registered";
-
   const submitted = studentInExam?.status === "submitted";
 
   const status = studentInExam?.status || "unregistered";

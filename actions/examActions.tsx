@@ -7,6 +7,7 @@ import { parseJSONResponse } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createActivity } from "./activityActions";
+import { getSession } from "@/services/authServices";
 
 type ExamDataType = {
   name: string;
@@ -189,6 +190,38 @@ export async function rejectRegistrationRequest(
   }
 }
 
+export async function startExam(
+  examId: string,
+  studentUserId: string,
+  matNumber: string,
+) {
+  let redirectUrl = "";
+  try {
+    await connectDB();
+
+    const user = await getSession();
+    if (!user) throw new Error("User not authenticated");
+
+    if (user.matNumber?.toLowerCase() !== matNumber.toLowerCase())
+      throw new Error("Invalid Mat Number");
+
+    const updatedExam = await Exam.findOneAndUpdate(
+      { _id: examId, "students.user": studentUserId },
+      { $set: { "students.$.matNumber": matNumber } },
+      { new: true },
+    );
+    if (!updatedExam) throw new Error("Unable to save student exam start time");
+
+    redirectUrl = `/dashboard/exams/${examId}/start`;
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error starting exam: ", error.message);
+    return { error: error.message };
+  } finally {
+    if (redirectUrl) redirect(redirectUrl);
+  }
+}
+
 export async function saveStudentExamStartTime(
   examId: string,
   studentUserId: string,
@@ -210,6 +243,32 @@ export async function saveStudentExamStartTime(
     console.log("Error saving student start time to database: ", error.message);
     return {
       error: "An error occured saving student start time to database",
+    };
+  }
+}
+
+export async function updateStudentSwitchTabCount(
+  examId: string,
+  studentUserId: string,
+) {
+  try {
+    await connectDB();
+    const updatedExam = await Exam.findOneAndUpdate(
+      { _id: examId, "students.user": studentUserId },
+      { $inc: { "students.$.switchTabCount": 1 } },
+      { new: true },
+    );
+
+    if (!updatedExam)
+      throw new Error("Unable to update student switch tab count");
+
+    revalidatePath("/", "layout");
+    return { error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error updating student switch tab count: ", error.message);
+    return {
+      error: "An error occured updating student switch tab count",
     };
   }
 }

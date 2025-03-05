@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/services/authServices";
 import { getExamStatus } from "@/lib/utils";
+import StartExamForm from "@/components/exam/StartExamForm";
 
 export default async function ExamOnboardingPage({
   params,
@@ -82,17 +83,14 @@ export default async function ExamOnboardingPage({
           </span>
         </p>
         {examStatus === "ready" ? (
-          <Link
-            href={`/dashboard/exams/${exam._id}/start`}
-            className="mt-4 rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
-          >
-            Start Exam
-          </Link>
+          <StartExamForm examId={exam._id} studentUserId={user._id} />
         ) : (
           <p className="mt-4 text-red-500">
-            {examStatus === "not-due"
-              ? "This exam is not yet due."
-              : "This exam has already passed."}
+            {student.status === "submitted"
+              ? "You have already taken this exam"
+              : examStatus === "not-due"
+                ? "This exam is not yet due."
+                : "This exam has already passed."}
           </p>
         )}
       </div>

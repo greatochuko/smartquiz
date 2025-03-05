@@ -8,18 +8,22 @@ import {
   submitExam,
   updateStudentAnswers,
 } from "@/actions/examActions";
+import useBrowserLockdown from "@/hooks/useBrowserLockdown";
+import WarningModal from "./WarningModal";
 
 export default function QuizScreen({
   exam,
   studentTimeLeft,
   studentExamStartTime,
   studentUserId,
+  studentSwitchTabCount,
   studentExamAnswers,
 }: {
   exam: ExamType;
   studentTimeLeft: number;
   studentExamStartTime?: Date;
   studentUserId: string;
+  studentSwitchTabCount: number;
   studentExamAnswers: StudentAnswerType[];
 }) {
   const [timeLeft, setTimeLeft] = useState(studentTimeLeft);
@@ -28,6 +32,20 @@ export default function QuizScreen({
   const [status, setStatus] = useState<
     "exam-ongoing" | "submit-modal" | "submitting"
   >(studentTimeLeft ? "exam-ongoing" : "submitting");
+
+  const handleSubmit = () => {
+    setStatus("submitting");
+    submitExam(exam._id, studentUserId);
+  };
+
+  const { isTabSwitched, setIsTabSwitched, switchTabCount } =
+    useBrowserLockdown({
+      examId: exam._id,
+      studentUserId,
+      studentSwitchTabCount,
+      studentTimeLeft,
+      handleSubmitExam: handleSubmit,
+    });
 
   const currentQuestion = exam.questions[currentIndex];
 
@@ -73,11 +91,6 @@ export default function QuizScreen({
 
     setAnswers(updatedAnswers);
     updateStudentAnswers(exam._id, studentUserId, updatedAnswers);
-  };
-
-  const handleSubmit = () => {
-    setStatus("submitting");
-    submitExam(exam._id, studentUserId);
   };
 
   const hasNextQuestion = exam.questions.length > currentIndex + 1;
@@ -196,6 +209,15 @@ export default function QuizScreen({
             </div>
           </div>
         </div>
+      )}
+
+      {!!studentTimeLeft && switchTabCount <= 1 && (
+        <WarningModal
+          isOpen={isTabSwitched}
+          onClose={() => {
+            setIsTabSwitched(false);
+          }}
+        />
       )}
     </>
   );
