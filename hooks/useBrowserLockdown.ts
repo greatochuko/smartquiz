@@ -20,7 +20,6 @@ const useBrowserLockdown = ({
   useEffect(() => {
     const handleVisibilityChange = async () => {
       if (document.hidden) {
-        console.log("visibility Switch tab triggered");
         setIsTabSwitched(true);
         setSwitchTabCount((curr) => curr + 1);
 
@@ -35,7 +34,6 @@ const useBrowserLockdown = ({
     };
 
     const handleWindowBlur = async () => {
-      console.log("blur Switch tab triggered");
       setIsTabSwitched(true);
       setSwitchTabCount((curr) => curr + 1);
       if (switchTabCount) {

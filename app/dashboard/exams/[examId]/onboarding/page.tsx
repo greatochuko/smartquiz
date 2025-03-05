@@ -62,7 +62,7 @@ export default async function ExamOnboardingPage({
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center bg-blue-50">
-      <div className="flex aspect-video w-[90%] max-w-md flex-col items-center justify-center rounded-lg bg-white p-4 text-center shadow-lg sm:p-6">
+      <div className="flex w-[90%] max-w-lg flex-col items-center justify-center rounded-lg bg-white p-4 text-center shadow-lg sm:p-6">
         <h1 className="mb-4 text-2xl font-bold">{exam.name || "Exam"}</h1>
         <p className="text-gray-600">
           Scheduled Date:{" "}
@@ -82,6 +82,15 @@ export default async function ExamOnboardingPage({
             {exam.duration} mins
           </span>
         </p>
+        <p className="mt-4 text-yellow-600">
+          ⚠ Please note the following rules for the exam:
+        </p>
+        <ul className="list-inside list-disc text-zinc-500">
+          <li>Do not switch tabs or leave the browser during the exam.</li>
+          <li>Ensure you have a stable internet connection.</li>
+          <li>You must complete the exam in one sitting.</li>
+          <li>Any form of cheating will result in disqualification.</li>
+        </ul>
         {examStatus === "ready" ? (
           <StartExamForm examId={exam._id} studentUserId={user._id} />
         ) : (

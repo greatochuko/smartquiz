@@ -29,7 +29,9 @@ export default function ExamRegistrationTableData({
       ? "bg-green-500"
       : student.status === "requested"
         ? "bg-amber-500"
-        : "bg-rose-500";
+        : student.status === "submitted"
+          ? "bg-purple-500"
+          : "bg-rose-500";
 
   return (
     <tr className="border-b">
@@ -68,10 +70,10 @@ export default function ExamRegistrationTableData({
         ) : (
           <Button
             variant={"ghost"}
-            className="h-fit p-2 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
+            className="h-fit p-2 text-rose-500 hover:bg-rose-50 hover:text-rose-600 disabled:cursor-not-allowed"
             size={"sm"}
             onClick={handleRemoveStudent}
-            disabled={anyLoading}
+            disabled={anyLoading || student.status === "submitted"}
           >
             {rejectLoading ? <LoadingIndicator color="#f43f5e " /> : "Remove"}
           </Button>

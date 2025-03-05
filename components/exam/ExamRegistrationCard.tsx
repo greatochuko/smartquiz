@@ -28,7 +28,9 @@ export default function ExamRegistrationCard({
       ? "text-green-500"
       : student.status === "requested"
         ? "text-amber-500"
-        : "text-rose-500";
+        : student.status === "submitted"
+          ? "text-purple-500"
+          : "text-rose-500";
 
   return (
     <div
@@ -67,10 +69,10 @@ export default function ExamRegistrationCard({
         ) : (
           <Button
             onClick={handleRemoveStudent}
-            disabled={anyLoading}
-            className="h-fit rounded-md bg-rose-600 px-3 py-1.5 text-white hover:bg-rose-600/90"
+            disabled={anyLoading || student.status === "submitted"}
+            className="h-fit rounded-md bg-rose-600 px-3 py-1.5 text-white hover:bg-rose-600/90 disabled:cursor-not-allowed"
           >
-            {loading ? "Removing..." : "Remove"}
+            {anyLoading ? "Removing..." : "Remove"}
           </Button>
         )}
       </div>
