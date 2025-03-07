@@ -31,13 +31,17 @@ export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
   }
 
   const getRegisteredStudents = (exam: ExamType) => {
-    return exam.students.filter((student) => student.status === "registered")
-      .length;
+    return exam.students.filter(
+      (student) =>
+        student.status === "registered" || student.status === "submitted",
+    ).length;
   };
 
   const getUnRegisteredStudents = (exam: ExamType) => {
-    return exam.students.filter((student) => student.status !== "registered")
-      .length;
+    return exam.students.filter(
+      (student) =>
+        student.status !== "registered" && student.status !== "submitted",
+    ).length;
   };
 
   return (
