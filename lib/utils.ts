@@ -74,16 +74,18 @@ export function getExamStatus(exam: ExamType): ExamStatusType {
   return examStatus;
 }
 
-export function getGrade(percentage: number) {
-  if (percentage >= 70) {
+export function getGrade(percentage: number, totalPercentage: number) {
+  const percent = (percentage / totalPercentage) * 100;
+
+  if (percent >= 70) {
     return "A";
-  } else if (percentage >= 60) {
+  } else if (percent >= 60) {
     return "B";
-  } else if (percentage >= 50) {
+  } else if (percent >= 50) {
     return "C";
-  } else if (percentage >= 55) {
+  } else if (percent >= 55) {
     return "D";
-  } else if (percentage >= 50) {
+  } else if (percent >= 50) {
     return "E";
   } else {
     return "F";
@@ -95,19 +97,19 @@ export function generateActivityMessage(activity: ActivityType) {
 
   switch (activity.action) {
     case "create-exam":
-      message = `Added new exam: ${activity.exam.name}`;
+      message = `Added new exam: ${activity.exam?.name || ""}`;
       break;
     case "delete-exam":
       message = `Deleted an exam`;
       break;
     case "update-exam":
-      message = `Updated exam: ${activity.exam.name}`;
+      message = `Updated exam: ${activity.exam?.name || ""}`;
       break;
     case "register-student":
-      message = `Register student: ${activity.student.firstName} ${activity.student.lastName} for ${activity.exam.name}`;
+      message = `Register student: ${activity.student.firstName} ${activity.student.lastName} for ${activity.exam?.name || ""}`;
       break;
     case "remove-student":
-      message = `Removed student: ${activity.student.firstName} ${activity.student.lastName} from ${activity.exam.name}`;
+      message = `Removed student: ${activity.student.firstName} ${activity.student.lastName} from ${activity.exam?.name || ""}`;
       break;
     default:
       message = "Unknown activity.";

@@ -1,5 +1,5 @@
 import BackButton from "@/components/BackButton";
-import { getGrade } from "@/lib/utils";
+// import { getGrade } from "@/lib/utils";
 import { getResultById } from "@/services/resultServices";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -15,9 +15,12 @@ export default async function StudentResultPage({
   if (!result) notFound();
 
   const totalQuestions = result.totalQuestions;
-  const scorePercentage = Math.floor((result.score / totalQuestions) * 100);
+  const examPercentage = result.exam.percentage;
+  const scorePercentage = Math.floor(
+    (result.score / totalQuestions) * examPercentage,
+  );
 
-  const examIsPassed = scorePercentage >= 50;
+  const examIsPassed = scorePercentage >= examPercentage / 2;
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center p-4">
@@ -51,17 +54,17 @@ export default async function StudentResultPage({
           <p className={` ${examIsPassed ? "text-green-600" : "text-red-600"}`}>
             {examIsPassed ? "Passed" : "Failed"}
           </p>
-          <p>
+          {/* <p>
             <span className="font-normal text-gray-600">Grade:</span>{" "}
-            {getGrade(scorePercentage)}
-          </p>
+            {getGrade(scorePercentage, examPercentage)}
+          </p> */}
         </div>
 
         <div className="flex justify-between gap-4">
           <BackButton />
           <Link
             href="/dashboard"
-            className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+            className="rounded-md bg-blue-600 px-6 py-2 text-sm text-white hover:bg-blue-700"
           >
             Back to Dashboard
           </Link>

@@ -151,6 +151,7 @@ export default function QuizScreen({
                       handleAnswerSelect(currentQuestion._id, option)
                     }
                   />
+                  <p>{["A", "B", "C", "D"][idx]}</p>
                   {option}
                 </label>
               ))}

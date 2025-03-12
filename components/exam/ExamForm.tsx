@@ -153,7 +153,11 @@ export default function ExamForm({
         id="type"
         value={type}
         onChange={(e) => setType(e.target.value)}
+        className="rounded-md border p-2"
       >
+        <option value="Select Exam Type" hidden>
+          C/A
+        </option>
         <option value="CA">C/A</option>
         <option value="EXAM">Exam</option>
       </select>
