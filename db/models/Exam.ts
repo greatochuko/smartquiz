@@ -43,6 +43,8 @@ export type ExamType = {
   questions: QuestionType[];
   students: StudentType[];
   examiner: UserType;
+  percentage: number;
+  type: "CA" | "EXAM";
   course: CourseType;
   createdAt: string;
   updatedAt: string;
@@ -53,6 +55,8 @@ const ExamSchema = new mongoose.Schema<ExamType>(
     name: { type: String, required: true },
     date: { type: Date, required: true },
     duration: { type: Number, required: true },
+    percentage: { type: Number, required: true },
+    type: { type: String, required: true, enum: ["CA", "EXAM"] },
     questions: { type: [QuestionSchema], required: true },
     students: {
       type: [

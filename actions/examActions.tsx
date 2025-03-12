@@ -18,6 +18,8 @@ type ExamDataType = {
     options: string[];
     answer: string;
   }[];
+  percentage: number;
+  type: string;
 };
 
 export async function createExam(

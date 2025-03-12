@@ -31,6 +31,10 @@ export default function ExamForm({
   const [name, setName] = useState(exam?.name || "");
   const [date, setDate] = useState(exam?.date);
   const [duration, setDuration] = useState(exam?.duration.toString() || "");
+  const [percentage, setPercentage] = useState(
+    exam?.percentage.toString() || "",
+  );
+  const [type, setType] = useState(exam?.type || "");
   const [questions, setQuestions] = useState<QuestionType[]>(
     exam?.questions || [
       { _id: "1", text: "", options: ["", "", "", ""], answer: "" },
@@ -89,6 +93,8 @@ export default function ExamForm({
         options: q.options,
         answer: q.answer,
       })),
+      percentage: Number(percentage),
+      type,
     };
     const data = exam
       ? await updateExam(exam._id, courseId, examData)
@@ -135,6 +141,22 @@ export default function ExamForm({
         value={duration}
         onChange={(e) => setDuration(e.target.value)}
       />
+      <Input
+        type="number"
+        placeholder="Total Score out of 100"
+        className="w-full rounded-md border p-2 ring-0 focus-visible:ring-blue-400"
+        value={percentage}
+        onChange={(e) => setPercentage(e.target.value)}
+      />
+      <select
+        name="type"
+        id="type"
+        value={type}
+        onChange={(e) => setType(e.target.value)}
+      >
+        <option value="CA">C/A</option>
+        <option value="EXAM">Exam</option>
+      </select>
       <h2 className="text-lg font-semibold">Questions</h2>
       {questions.map((q, index) => (
         <div
