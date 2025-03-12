@@ -20,13 +20,18 @@ type ExamDataType = {
   }[];
 };
 
-export async function createExam(userId: string, examData: ExamDataType) {
+export async function createExam(
+  userId: string,
+  courseId: string,
+  examData: ExamDataType,
+) {
   let canRedirect = false;
   try {
     await connectDB();
     const newExam: ExamType = await Exam.create({
       ...examData,
       examiner: userId,
+      course: courseId,
     });
 
     await createActivity("create-exam", newExam._id);
@@ -37,11 +42,15 @@ export async function createExam(userId: string, examData: ExamDataType) {
     console.log("Error creating exam: ", error.message);
     return { error: "An error occured creating new exam" };
   } finally {
-    if (canRedirect) redirect("/dashboard/exams");
+    if (canRedirect) redirect(`/dashboard/courses/${courseId}`);
   }
 }
 
-export async function updateExam(examId: string, examData: ExamDataType) {
+export async function updateExam(
+  examId: string,
+  courseId: string,
+  examData: ExamDataType,
+) {
   let canRedirect = false;
   try {
     await connectDB();
@@ -59,7 +68,7 @@ export async function updateExam(examId: string, examData: ExamDataType) {
     console.log("Error creating exam: ", error.message);
     return { error: "An error occured creating new exam" };
   } finally {
-    if (canRedirect) redirect("/dashboard/exams");
+    if (canRedirect) redirect(`/dashboard/courses/${courseId}`);
   }
 }
 

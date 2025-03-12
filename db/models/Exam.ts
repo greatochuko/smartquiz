@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { UserType } from "./User";
 import { ResultType } from "./Result";
+import { CourseType } from "./Course";
 
 export type QuestionType = {
   _id: string;
@@ -42,6 +43,7 @@ export type ExamType = {
   questions: QuestionType[];
   students: StudentType[];
   examiner: UserType;
+  course: CourseType;
   createdAt: string;
   updatedAt: string;
 } & mongoose.Document;
@@ -91,6 +93,11 @@ const ExamSchema = new mongoose.Schema<ExamType>(
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
       ref: "User",
+    },
+    course: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true,
+      ref: "Course",
     },
   },
   { timestamps: true },

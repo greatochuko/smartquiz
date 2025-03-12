@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { PencilIcon, TrashIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { deleteExam } from "@/actions/examActions";
 import LoadingIndicator from "../LoadingIndicator";
@@ -40,31 +40,27 @@ export default function AdminCoursesTable({
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b">
-              <th className="w-1/5 p-2 pl-4 text-left font-medium">
-                Course Name
-              </th>
-              <th className="w-1/5 p-2 text-left font-medium">Date Created</th>
+              <th className="p-2 pl-4 text-left font-medium">Course Name</th>
+              <th className="p-2 text-left font-medium">Date Created</th>
 
-              <th className="w-1/5 p-2 pr-4 text-left font-medium">Actions</th>
+              <th className="p-2 pr-4 text-left font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
             {courseList.map((course) => (
               <tr key={course._id} className="border-b">
                 <td className="p-2 pl-4">
-                  <span className="line-clamp-1">{course.name}</span>
+                  <span className="line-clamp-1">
+                    <Link
+                      href={`/dashboard/courses/${course._id}`}
+                      className="font-medium hover:underline"
+                    >
+                      {course.name}
+                    </Link>
+                  </span>
                 </td>
                 <td className="p-2">{format(course.createdAt, "PPP")}</td>
-                <td className="flex gap-2 p-2 pr-4">
-                  <Link href={`/dashboard/exams/${course._id}/edit`}>
-                    <Button
-                      variant={"ghost"}
-                      className="h-fit p-2 hover:bg-blue-50"
-                      size={"sm"}
-                    >
-                      <PencilIcon className="h-4 w-4 text-blue-600" />
-                    </Button>
-                  </Link>
+                <td className="flex items-center gap-2 p-2 pr-4">
                   <Button
                     variant={"ghost"}
                     className="h-fit p-2 hover:bg-rose-50"

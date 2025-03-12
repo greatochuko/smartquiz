@@ -9,7 +9,13 @@ import { deleteExam } from "@/actions/examActions";
 import LoadingIndicator from "../LoadingIndicator";
 import Error from "../Error";
 
-export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
+export default function AdminExamsTable({
+  exams,
+  courseId,
+}: {
+  exams: ExamType[];
+  courseId: string;
+}) {
   const [examList, setExamList] = useState(exams);
   const [examToDelete, setExamToDelete] = useState<ExamType | null>(null);
   const [loading, setLoading] = useState(false);
@@ -74,7 +80,9 @@ export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
                 <td className="p-2">{getRegisteredStudents(exam)}</td>
                 <td className="p-2">{getUnRegisteredStudents(exam)}</td>
                 <td className="flex gap-2 p-2 pr-4">
-                  <Link href={`/dashboard/exams/${exam._id}/edit`}>
+                  <Link
+                    href={`/dashboard/courses/${courseId}/${exam._id}/edit`}
+                  >
                     <Button
                       variant={"ghost"}
                       className="h-fit p-2 hover:bg-blue-50"
@@ -91,7 +99,9 @@ export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
                   >
                     <TrashIcon className="h-4 w-4 text-rose-600" />
                   </Button>
-                  <Link href={`/dashboard/exams/${exam._id}/students`}>
+                  <Link
+                    href={`/dashboard/courses/${courseId}/${exam._id}/students`}
+                  >
                     <Button
                       variant={"ghost"}
                       className="h-fit p-2 hover:bg-amber-50"
@@ -118,7 +128,7 @@ export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
             <p className="text-gray-600">Date: {format(exam.date, "PPP")}</p>
             <p className="text-gray-600">Students: {exam.students.length}</p>
             <div className="mt-2 flex gap-2">
-              <Link href={`/dashboard/exams/${exam._id}/edit`}>
+              <Link href={`/dashboard/courses/${courseId}/${exam._id}/edit`}>
                 <Button className="h-fit rounded-md bg-blue-500 px-3 py-1.5 text-white hover:bg-blue-500/90">
                   Edit
                 </Button>
@@ -129,7 +139,7 @@ export default function AdminExamsTable({ exams }: { exams: ExamType[] }) {
               >
                 Delete
               </Button>
-              <Link href={`/dashboard/exams/${exam._id}/edit`}>
+              <Link href={`/dashboard/courses/${courseId}/${exam._id}/edit`}>
                 <Button className="h-fit rounded-md bg-amber-500 px-3 py-1.5 text-white hover:bg-amber-500/90">
                   Students
                 </Button>

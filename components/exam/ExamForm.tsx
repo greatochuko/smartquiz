@@ -17,12 +17,16 @@ import { CalendarIcon } from "lucide-react";
 import { createExam, updateExam } from "@/actions/examActions";
 import { ExamType, QuestionType } from "@/db/models/Exam";
 
+const optionsLetter = ["A", "B", "C", "D"];
+
 export default function ExamForm({
   exam,
   userId,
+  courseId,
 }: {
   exam?: ExamType;
   userId: string;
+  courseId: string;
 }) {
   const [name, setName] = useState(exam?.name || "");
   const [date, setDate] = useState(exam?.date);
@@ -87,8 +91,8 @@ export default function ExamForm({
       })),
     };
     const data = exam
-      ? await updateExam(exam._id, examData)
-      : await createExam(userId, examData);
+      ? await updateExam(exam._id, courseId, examData)
+      : await createExam(userId, courseId, examData);
     if (data?.error) setError(data.error);
     setLoading(false);
   }
@@ -161,17 +165,24 @@ export default function ExamForm({
           />
           {q.options.map((option, optIndex) => (
             <div className="flex items-center gap-2" key={optIndex}>
-              <input
-                type="radio"
-                name={`option-${q._id}-${optIndex}`}
-                id={`option-${q._id}-${optIndex}`}
-                checked={q.answer ? q.answer === option : false}
-                onChange={() => handleQuestionChange(index, "answer", option)}
-                className="accent-blue-600"
-              />
+              <label
+                htmlFor={`Question ${index + 1} Option ${optIndex + 1}`}
+                className="flex items-center gap-2"
+              >
+                <input
+                  type="radio"
+                  name={`option-${q._id}-${optIndex}`}
+                  id={`option-${q._id}-${optIndex}`}
+                  checked={q.answer ? q.answer === option : false}
+                  onChange={() => handleQuestionChange(index, "answer", option)}
+                  className="accent-blue-600"
+                />
+                {optionsLetter[optIndex]}
+              </label>
               <Input
                 type="text"
-                placeholder={`Option ${optIndex + 1}`}
+                id={`Question ${index + 1} Option ${optIndex + 1}`}
+                placeholder={`Option ${optionsLetter[optIndex]}`}
                 className="w-full rounded-md border p-2 focus-visible:ring-blue-400"
                 value={option}
                 onChange={(e) => {
